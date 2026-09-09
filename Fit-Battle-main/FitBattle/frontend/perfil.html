@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitBattle - Perfil</title>
+<link rel="stylesheet" href="perfil.css">
+<script src="perfil.js" defer></script>
+</head>
+
+<body>
+
+<div class="app-window">
+
+    <header>
+        <div class="logo">FIT<span>BATTLE</span></div>
+        <div class="search-container">
+            <input type="text" class="search-bar" placeholder="Pesquisar...">
+        </div>
+        <div class="header-actions">
+            <button class="nav-icon" id="btnProgresso" aria-label="Relatório" title="Relatório (em breve)">📊</button>
+            <button class="nav-icon" id="btnRanking" aria-label="Ranking" title="Ranking (em breve)">🏆</button>
+            <div class="profile-pic-mini" id="avatarMini"></div>
+            <button class="settings-btn" id="toggleMenuBtn" aria-label="Abrir menu">⚙️</button>
+        </div>
+    </header>
+
+    <div class="main-content" id="mainContent">
+
+        <div class="profile-banner"></div>
+
+        <div class="user-info-container">
+            <button type="button" class="avatar-large" id="avatarLarge" aria-label="Ver ou trocar a foto de perfil"></button>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="value" id="statTreinos">0</span>
+                    <span class="label">Treinos</span>
+                </div>
+                <div class="stat-item">
+                    <span class="value" id="statRanking">—</span>
+                    <span class="label">Ranking Local</span>
+                </div>
+                <div class="stat-item">
+                    <span class="value" id="statSequencia">0d</span>
+                    <span class="label">Sequência</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bio-section">
+            <div class="profile-name">
+                <span id="pNome">—</span>
+                <button class="edit-btn" id="btnEditarPerfil" aria-label="Editar perfil">✏️</button>
+            </div>
+            <div class="profile-tag"><span id="pHandle">—</span> &nbsp;•&nbsp; <span id="pLocal">—</span></div>
+            <p class="bio-description" id="pBio"></p>
+            <div class="physical-specs">
+                <span>Peso: <span id="pPeso">—</span></span>
+                <span>Altura: <span id="pAltura">—</span></span>
+                <span>Idade: <span id="pIdade">—</span></span>
+            </div>
+        </div>
+
+        <div class="level-section">
+            <div class="level-header">Nível <span id="levelNome">—</span></div>
+            <div class="progress-track">
+                <div class="progress-bar" id="levelBar"></div>
+                <div class="progress-marker" id="levelMarker"></div>
+            </div>
+            <div class="level-footer-text" id="levelFooter">—</div>
+        </div>
+
+        <div class="activity-section">
+            <div class="activity-header">
+                <h2>Meus treinos</h2>
+                <button class="btn-novo-treino" id="btnNovoTreino">+ Novo treino</button>
+            </div>
+            <div id="listaTreinos">
+                <p class="lista-vazia" id="listaVazia" hidden>Nenhum treino ainda. Clique em "+ Novo treino" para registrar o primeiro.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="config-sidebar" id="configSidebar">
+        <button class="close-config" id="closeMenuBtn" aria-label="Fechar menu">✕</button>
+
+        <div>
+            <div class="challenge-container">
+                <h3>Desafios sazonais</h3>
+                <p>Em breve você vai poder<br>participar dos desafios do FitBattle.</p>
+            </div>
+
+            <ul class="menu-links-list">
+                <li><a href="perfil.html">Perfil</a></li>
+                <li><a href="#" class="menu-em-breve">Explorar</a></li>
+                <li><a href="#" class="menu-em-breve">Ranking</a></li>
+                <li><a href="#" class="menu-em-breve">Amigos</a></li>
+                <li><a href="#" class="menu-em-breve">Grupos</a></li>
+                <li><button class="menu-link-btn" id="btnEditarPerfilMenu">Configurações</button></li>
+                <li><button class="menu-link-btn menu-sair" id="btnSair">Sair</button></li>
+            </ul>
+        </div>
+
+        <div class="menu-footer">
+            <div class="footer-brand">
+                <a class="brand-circle" href="https://www.instagram.com/" target="_blank" rel="noopener" aria-label="Instagram do FitBattle">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <circle cx="12" cy="12" r="4.6" fill="none" stroke="#ffffff" stroke-width="2"/>
+                        <circle cx="17.4" cy="6.6" r="1.5" fill="#ffffff"/>
+                    </svg>
+                </a>
+                <div class="brand-text-logo">FIT<span>BATTLE</span></div>
+            </div>
+            <p class="footer-terms">
+                <a href="termos.html#termo-uso" target="_blank" rel="noopener">Termo de Uso</a> ·
+                <a href="termos.html#termo-consentimento" target="_blank" rel="noopener">Termo de Consentimento</a>
+            </p>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal: novo treino -->
+<div class="overlay" id="overlayTreino">
+    <div class="modal">
+        <button class="modal-close" id="closeTreino" aria-label="Fechar">✕</button>
+        <h2>Novo treino</h2>
+        <form id="formTreino" novalidate>
+            <div class="campo">
+                <label for="treinoTipo">Tipo</label>
+                <select id="treinoTipo">
+                    <option value="musculacao">Musculação</option>
+                    <option value="cardio">Cardio</option>
+                    <option value="yoga">Yoga</option>
+                    <option value="outro">Outro</option>
+                </select>
+            </div>
+            <div class="campo">
+                <label for="treinoTitulo">Título / grupo</label>
+                <input type="text" id="treinoTitulo" placeholder="Ex: Peito, Corrida" required>
+            </div>
+            <div class="campo">
+                <label for="treinoDesc">Descrição</label>
+                <textarea id="treinoDesc" placeholder="Como foi o treino?"></textarea>
+            </div>
+            <div class="campo">
+                <label for="treinoHoras">Duração</label>
+                <div class="campo-duplo">
+                    <input type="number" id="treinoHoras" min="0" max="23" placeholder="0" aria-label="Horas">
+                    <span>h</span>
+                    <input type="number" id="treinoMinutos" min="0" max="59" placeholder="0" aria-label="Minutos">
+                    <span>min</span>
+                </div>
+            </div>
+            <div class="campo-linha" id="linhaForca">
+                <div class="campo">
+                    <label for="treinoCarga">Carga máx. (kg)</label>
+                    <input type="number" id="treinoCarga" min="0" step="0.1">
+                </div>
+                <div class="campo">
+                    <label for="treinoReps">Séries / repetições</label>
+                    <input type="number" id="treinoReps" min="0">
+                </div>
+            </div>
+            <div class="campo" id="campoDist">
+                <label for="treinoKm">Distância</label>
+                <div class="campo-duplo">
+                    <input type="number" id="treinoKm" min="0" placeholder="0" aria-label="Quilômetros">
+                    <span>km</span>
+                    <input type="number" id="treinoMetros" min="0" max="999" placeholder="0" aria-label="Metros">
+                    <span>m</span>
+                </div>
+            </div>
+            <span class="erro-modal" id="erroTreino"></span>
+            <button type="submit" class="btn-modal">Registrar treino</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: editar perfil -->
+<div class="overlay" id="overlayPerfil">
+    <div class="modal">
+        <button class="modal-close" id="closePerfil" aria-label="Fechar">✕</button>
+        <h2>Editar perfil</h2>
+        <form id="formPerfil">
+            <div class="avatar-upload">
+                <div class="avatar-preview" id="avatarPreview"></div>
+                <div>
+                    <input type="file" id="fotoInput" accept="image/png,image/jpeg,image/webp" hidden>
+                    <button type="button" class="file-btn" id="fotoBtn">Escolher foto</button>
+                    <span class="file-nome" id="fotoNome">JPG, PNG ou WEBP (até 3 MB)</span>
+                </div>
+            </div>
+            <div class="campo">
+                <label for="editNome">Nome</label>
+                <input type="text" id="editNome" required>
+            </div>
+            <div class="campo">
+                <label for="editEmail">E-mail</label>
+                <input type="email" id="editEmail" required>
+            </div>
+            <div class="campo">
+                <label for="editBio">Bio</label>
+                <textarea id="editBio" placeholder="Fale um pouco sobre você"></textarea>
+            </div>
+            <div class="campo-linha">
+                <div class="campo">
+                    <label for="editIdade">Idade</label>
+                    <input type="number" id="editIdade" min="1" max="120">
+                </div>
+                <div class="campo">
+                    <label for="editCidade">Cidade</label>
+                    <input type="text" id="editCidade" placeholder="Cidade, UF">
+                </div>
+            </div>
+            <div class="campo-linha">
+                <div class="campo">
+                    <label for="editPeso">Peso (kg)</label>
+                    <input type="number" id="editPeso" min="20" max="400" step="0.1">
+                </div>
+                <div class="campo">
+                    <label for="editAltura">Altura (m)</label>
+                    <input type="number" id="editAltura" min="0.5" max="2.7" step="0.01">
+                </div>
+            </div>
+            <span class="erro-modal" id="erroPerfil"></span>
+            <button type="submit" class="btn-modal">Salvar alterações</button>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: ranking -->
+<div class="overlay" id="overlayRanking">
+    <div class="modal">
+        <button class="modal-close" id="closeRanking" aria-label="Fechar">✕</button>
+        <h2>Ranking</h2>
+        <div class="ranking-abas">
+            <button class="ranking-aba ativa" data-escopo="regional">Minha cidade</button>
+            <button class="ranking-aba" data-escopo="global">Global</button>
+        </div>
+        <div id="rankingLista"></div>
+    </div>
+</div>
+
+<!-- Lightbox: foto de perfil ampliada -->
+<div class="overlay" id="overlayFoto">
+    <div class="foto-viewer">
+        <button class="modal-close" id="closeFoto" aria-label="Fechar">✕</button>
+        <img id="fotoAmpliada" src="" alt="Foto de perfil">
+        <button class="btn-trocar-foto" id="btnTrocarFoto">📷 Trocar foto</button>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+</body>
+</html>

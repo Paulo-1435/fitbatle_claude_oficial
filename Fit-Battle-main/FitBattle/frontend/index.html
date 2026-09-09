@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Registre-se</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <div class="card">
+
+    <div class="left-panel">
+      <h1 class="title">REGISTRE-SE</h1>
+      <p class="subtitle">Crie sua conta e entre na competição</p>
+
+      <form id="registerForm" class="register-form" novalidate>
+
+        <div class="field">
+          <label for="usuario">Usuário:</label>
+          <input type="text" id="usuario" name="usuario" placeholder="Seu nome" required>
+        </div>
+
+        <div class="field">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" placeholder="seu@email.com" required>
+        </div>
+
+        <div class="field">
+          <label for="idade">Idade:</label>
+          <input type="number" id="idade" name="idade" placeholder="Sua idade" min="1" max="120" required>
+        </div>
+
+        <div id="responsavelBox" hidden>
+          <p class="responsavel-aviso">
+            Menor de 18 anos: o cadastro precisa da autorização do seu responsável legal (art. 14 da LGPD).
+          </p>
+          <div class="field">
+            <label for="responsavelNome">Nome do responsável legal:</label>
+            <input type="text" id="responsavelNome" name="responsavelNome" placeholder="Nome completo do responsável">
+          </div>
+          <div class="field">
+            <label for="responsavelEmail">E-mail do responsável legal:</label>
+            <input type="email" id="responsavelEmail" name="responsavelEmail" placeholder="email@responsavel.com">
+          </div>
+          <label class="consent-accept">
+            <input type="checkbox" id="autorizacaoResponsavel">
+            <span>Sou o responsável legal por este(a) adolescente e autorizo a criação e a manutenção da conta, incluindo a participação nos rankings e na busca de perfis.</span>
+          </label>
+        </div>
+
+        <div class="field">
+          <label for="senha">Senha:</label>
+          <input type="password" id="senha" name="senha" placeholder="Mínimo 8 caracteres" minlength="8" required>
+        </div>
+
+        <div class="field">
+          <label for="confirmaSenha">Confirme a senha:</label>
+          <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Repita a senha" minlength="8" required>
+        </div>
+
+        <fieldset class="consent-box">
+          <legend>Termo de Uso e Consentimento (LGPD)</legend>
+          <p class="consent-intro">
+            As permissões abaixo já vêm marcadas. <strong>Desmarque</strong> o que você
+            não autoriza — você pode mudar isso depois nas configurações.
+            <a href="termos.html#termo-uso" target="_blank" rel="noopener" class="terms-link">Termo de Uso</a> ·
+            <a href="termos.html#termo-consentimento" target="_blank" rel="noopener" class="terms-link">Termo de Consentimento</a>
+          </p>
+
+          <div class="consent-scroll">
+            <p class="consent-group-title">Obrigatórios <span>(necessários para a conta existir)</span></p>
+
+            <label class="consent-item is-locked">
+              <input type="checkbox" checked disabled>
+              <span>Criar, autenticar e manter a minha conta</span>
+            </label>
+            <label class="consent-item is-locked">
+              <input type="checkbox" checked disabled>
+              <span>Registrar e guardar meus treinos e histórico</span>
+            </label>
+            <label class="consent-item is-locked">
+              <input type="checkbox" checked disabled>
+              <span>Tratar dados de treino que possam revelar condição de saúde (art. 11 da LGPD)</span>
+            </label>
+            <label class="consent-item is-locked">
+              <input type="checkbox" checked disabled>
+              <span>Guardar registros técnicos de segurança e auditoria</span>
+            </label>
+
+            <p class="consent-group-title">Opcionais <span>(pode recusar sem perder o uso do app)</span></p>
+
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="ranking_publico" checked>
+              <span>Aparecer nos rankings regional e global</span>
+            </label>
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="localizacao" checked>
+              <span>Usar minha cidade/região no ranking regional</span>
+            </label>
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="chat_publico" checked>
+              <span>Participar dos chats públicos</span>
+            </label>
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="chat_privado_externo" checked>
+              <span>Receber mensagens privadas de quem não está nos meus grupos</span>
+            </label>
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="busca_perfil" checked>
+              <span>Permitir que outros usuários me encontrem pela busca</span>
+            </label>
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="notificacoes" checked>
+              <span>Receber notificações por push ou e-mail</span>
+            </label>
+            <label class="consent-item">
+              <input type="checkbox" name="consent" value="compartilhamento" checked>
+              <span>Compartilhar minhas conquistas em redes sociais</span>
+            </label>
+          </div>
+
+          <label class="consent-accept">
+            <input type="checkbox" id="aceiteTermos">
+            <span>Li e aceito o Termo de Uso e o Termo de Consentimento.</span>
+          </label>
+        </fieldset>
+
+        <span class="error-message" id="errorMessage"></span>
+
+        <button type="submit" class="btn-cadastrar">CADASTRE-SE</button>
+      </form>
+
+      <div class="login-section">
+        <p class="login-text">ja tem uma conta? <a href="login.html" class="login-link">Faça login</a></p>
+        <p class="terms-text">
+          Ao se cadastrar, você concorda com o
+          <a href="termos.html#termo-uso" target="_blank" rel="noopener" class="terms-link">Termo de Uso</a> e o
+          <a href="termos.html#termo-consentimento" target="_blank" rel="noopener" class="terms-link">Termo de Consentimento</a> do FitBattle.
+        </p>
+      </div>
+    </div>
+
+    <div class="right-panel">
+      <div class="logo">
+        <svg class="logo-icon" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
+          <!-- Letter F -->
+          <path d="M10 10 L10 100 L28 100 L28 65 L55 65 L55 50 L28 50 L28 25 L62 25 L62 10 Z" fill="#ffffff"/>
+          <!-- Lightning bolt forming the 3 -->
+          <path d="M95 5 L55 55 L78 55 L45 105 L110 45 L85 45 Z" fill="#1ec8ff"/>
+        </svg>
+        <div class="logo-text">
+          <span class="logo-fit">Fit</span><span class="logo-battle">Battle</span>
+        </div>
+      </div>
+      <p class="tagline">Treine. Compita. Evolua.</p>
+
+      <div class="social-section">
+        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram do FitBattle">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4.6" fill="none" stroke="#ffffff" stroke-width="2"/>
+            <circle cx="17.4" cy="6.6" r="1.5" fill="#ffffff"/>
+          </svg>
+        </a>
+        <span class="social-text">Siga-nos no Instagram</span>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitBattle - Perfil (Opção C: Card central)</title>
+<style>
+  :root{
+    --bg:#0a0a0f; --card:#16161d; --card-2:#1e1e26; --border:#2a2a34;
+    --text:#f2f2f2; --text-2:#9a9aa5; --text-3:#6c6c72;
+    --accent:#1ec8ff; --danger:#e5484d; --green:#3fae52;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{
+    font-family:'Segoe UI',-apple-system,Arial,sans-serif;
+    background:var(--bg);color:var(--text);line-height:1.5;
+    display:flex;justify-content:center;padding:32px 20px;
+  }
+  button{font-family:inherit;cursor:pointer;}
+
+  .card{
+    width:100%;max-width:520px;
+    background:var(--card);border:2px solid var(--accent);border-radius:18px;
+    padding:34px 36px;
+  }
+
+  .topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;}
+  .logo{font-size:18px;font-weight:800;}
+  .logo span{color:var(--accent);}
+  .topbar .icons{display:flex;gap:6px;}
+  .icon-btn{width:32px;height:32px;border:none;border-radius:8px;background:var(--card-2);color:var(--text-2);font-size:14px;}
+  .icon-btn:hover{color:var(--text);}
+
+  .head{text-align:center;}
+  .avatar{width:104px;height:104px;border-radius:50%;background:#d9d9d9;margin:0 auto 12px;display:block;}
+  .name{font-size:22px;font-weight:800;display:inline-flex;align-items:center;gap:8px;}
+  .edit{background:none;border:none;color:var(--text-2);font-size:14px;}
+  .edit:hover{color:var(--accent);}
+  .handle{color:var(--text-2);font-size:13px;margin-top:4px;}
+  .bio{color:var(--text-2);font-size:12.5px;margin-top:10px;}
+
+  .stats{display:flex;justify-content:center;gap:34px;margin:20px 0;text-align:center;}
+  .stats div b{display:block;font-size:19px;font-weight:800;}
+  .stats div span{font-size:11px;color:var(--text-2);}
+
+  .specs{display:flex;justify-content:center;gap:16px;color:var(--text-3);font-size:12px;margin-bottom:20px;}
+
+  .level{background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+  .level-top{display:flex;justify-content:space-between;font-size:13px;color:var(--text-2);}
+  .level-top b{color:var(--text);text-transform:capitalize;}
+  .bar{height:7px;border-radius:999px;background:var(--border);overflow:hidden;margin:10px 0 6px;}
+  .bar i{display:block;height:100%;width:82%;background:linear-gradient(90deg,var(--accent),#59dcff);}
+  .level-foot{font-size:11px;color:var(--text-3);text-align:right;}
+
+  .sec-title{display:flex;align-items:center;justify-content:space-between;margin:24px 0 12px;}
+  .sec-title h2{font-size:13px;text-transform:uppercase;letter-spacing:.5px;color:var(--text-2);}
+  .add{background:var(--accent);color:#05222b;border:none;border-radius:999px;font-size:12px;font-weight:700;padding:6px 14px;}
+
+  .t-item{
+    display:flex;align-items:center;gap:12px;
+    padding:12px 0;border-bottom:1px solid var(--border);
+  }
+  .t-item:last-child{border-bottom:none;}
+  .t-ic{width:34px;height:34px;border-radius:50%;background:var(--card-2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+  .t-main b{font-size:13px;}
+  .t-main span{display:block;font-size:11px;color:var(--text-3);}
+  .t-val{margin-left:auto;text-align:right;font-size:12px;color:var(--text-2);}
+  .t-del{background:none;border:none;color:var(--text-3);font-size:14px;}
+  .t-del:hover{color:#f2a3a5;}
+
+  @media(max-width:520px){
+    .card{padding:26px 22px;}
+    .stats{gap:22px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="topbar">
+    <div class="logo">FIT<span>BATTLE</span></div>
+    <div class="icons">
+      <button class="icon-btn" aria-label="Progresso">📊</button>
+      <button class="icon-btn" aria-label="Ranking">🏆</button>
+      <button class="icon-btn" aria-label="Configurações">⚙️</button>
+    </div>
+  </div>
+
+  <div class="head">
+    <span class="avatar"></span>
+    <div class="name">Paulo Souza <button class="edit" aria-label="Editar perfil">✏️</button></div>
+    <div class="handle">@paulo · Belo Horizonte, MG</div>
+    <p class="bio">Apaixonado por musculação. Sempre buscando meu próximo PR.</p>
+  </div>
+
+  <div class="stats">
+    <div><b>99</b><span>Treinos</span></div>
+    <div><b>3º</b><span>Ranking local</span></div>
+    <div><b>4d</b><span>Sequência</span></div>
+  </div>
+
+  <div class="specs"><span>Peso: 78 kg</span><span>Altura: 1,80 m</span><span>Idade: 28</span></div>
+
+  <div class="level">
+    <div class="level-top"><span>Nível <b>profissional</b></span><span>82%</span></div>
+    <div class="bar"><i></i></div>
+    <div class="level-foot">Faltam 555 xp para o próximo nível</div>
+  </div>
+
+  <div class="sec-title">
+    <h2>Meus treinos</h2>
+    <button class="add">+ Novo treino</button>
+  </div>
+
+  <div class="t-item">
+    <div class="t-ic">🏋️</div>
+    <div class="t-main"><b>Musculação — Peito</b><span>Hoje, 08:12</span></div>
+    <div class="t-val">60 min · 100 kg</div>
+    <button class="t-del" aria-label="Excluir treino">🗑️</button>
+  </div>
+  <div class="t-item">
+    <div class="t-ic">🏃</div>
+    <div class="t-main"><b>Cardio — Corrida</b><span>Ontem, 19:40</span></div>
+    <div class="t-val">45 min · 8 km</div>
+    <button class="t-del" aria-label="Excluir treino">🗑️</button>
+  </div>
+  <div class="t-item">
+    <div class="t-ic">🧘</div>
+    <div class="t-main"><b>Yoga — Alongamento</b><span>2 dias atrás</span></div>
+    <div class="t-val">30 min</div>
+    <button class="t-del" aria-label="Excluir treino">🗑️</button>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitBattle - Perfil (Opção B: Painel)</title>
+<style>
+  :root{
+    --bg:#0e0e12; --card:#16161d; --card-2:#1c1c24; --border:#262630;
+    --text:#f2f2f2; --text-2:#9a9aa5; --text-3:#6c6c72;
+    --accent:#1ec8ff; --danger:#e5484d; --green:#3fae52; --gold:#e0b64a;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Segoe UI',-apple-system,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.5;}
+  button{font-family:inherit;cursor:pointer;}
+
+  header{
+    display:flex;align-items:center;gap:16px;
+    padding:14px 28px;background:var(--card);border-bottom:1px solid var(--border);
+  }
+  .logo{font-size:21px;font-weight:800;}
+  .logo span{color:var(--accent);}
+  .search{flex:1;max-width:360px;}
+  .search input{width:100%;height:34px;border:none;border-radius:8px;background:var(--card-2);color:var(--text);padding:0 14px;font-size:13px;outline:none;}
+  .icons{margin-left:auto;display:flex;gap:8px;}
+  .icon-btn{width:34px;height:34px;border-radius:8px;border:none;background:var(--card-2);color:var(--text-2);font-size:16px;}
+  .icon-btn:hover{color:var(--text);}
+
+  .page{max-width:1080px;margin:22px auto;padding:0 24px;display:grid;grid-template-columns:1fr 300px;gap:22px;}
+
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px;}
+  .panel + .panel{margin-top:22px;}
+  .panel h2{font-size:12px;text-transform:uppercase;letter-spacing:.6px;color:var(--text-2);margin-bottom:14px;}
+
+  /* Cabeçalho do perfil */
+  .phead{display:flex;gap:18px;align-items:flex-start;}
+  .avatar{width:84px;height:84px;border-radius:50%;background:#d9d9d9;flex-shrink:0;}
+  .phead h1{font-size:20px;display:flex;align-items:center;gap:8px;}
+  .edit{background:none;border:none;color:var(--text-2);font-size:14px;}
+  .edit:hover{color:var(--accent);}
+  .handle{color:var(--text-2);font-size:13px;margin-top:3px;}
+  .bio{color:var(--text-2);font-size:12.5px;margin-top:8px;max-width:420px;}
+  .specs{display:flex;gap:14px;margin-top:8px;color:var(--text-3);font-size:11.5px;}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;}
+  .kpi{background:var(--card-2);border:1px solid var(--border);border-radius:10px;padding:14px;text-align:center;}
+  .kpi b{display:block;font-size:20px;font-weight:800;}
+  .kpi span{font-size:11px;color:var(--text-2);}
+
+  /* Treinos em 2 colunas */
+  .tgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .tcard{background:var(--card-2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;}
+  .tcard .tt{font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px;}
+  .tcard .tt span{color:var(--text-2);font-weight:400;}
+  .tcard .td{font-size:12px;color:#d0d0d5;margin:8px 0 12px;}
+  .tm{display:flex;gap:16px;}
+  .tm div b{font-size:14px;font-weight:800;}
+  .tm div span{display:block;font-size:10px;color:var(--text-3);}
+  .tacts{display:flex;gap:8px;margin-top:12px;}
+  .pill{flex:1;text-align:center;background:transparent;border:1px solid var(--border);color:var(--text-2);font-size:11px;padding:6px 0;border-radius:8px;}
+  .pill:hover{color:var(--text);border-color:var(--text-3);}
+  .pill.danger:hover{color:#f2a3a5;border-color:#5a2a2c;}
+
+  /* Coluna lateral */
+  .lvl b{font-size:18px;text-transform:capitalize;}
+  .bar{height:8px;border-radius:999px;background:var(--border);overflow:hidden;margin:12px 0 6px;}
+  .bar i{display:block;height:100%;width:82%;background:linear-gradient(90deg,var(--accent),#59dcff);}
+  .lvl .f{font-size:11px;color:var(--text-3);}
+  .challenge{margin-top:10px;font-size:13px;color:var(--text-2);}
+  .challenge b{color:var(--text);}
+  .btn{margin-top:12px;width:100%;background:var(--accent);color:#05222b;border:none;border-radius:8px;padding:9px;font-size:12px;font-weight:700;}
+  .side-links{list-style:none;display:flex;flex-direction:column;gap:2px;}
+  .side-links a{display:block;padding:9px 10px;border-radius:8px;color:var(--text-2);text-decoration:none;font-size:13px;}
+  .side-links a:hover{background:var(--card-2);color:var(--text);}
+
+  @media(max-width:880px){
+    .page{grid-template-columns:1fr;}
+    .tgrid{grid-template-columns:1fr;}
+  }
+  @media(max-width:560px){
+    header{padding:12px 16px;} .search{display:none;} .page{padding:0 14px;}
+    .grid3{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">FIT<span>BATTLE</span></div>
+  <div class="search"><input type="text" placeholder="Pesquisar..."></div>
+  <div class="icons">
+    <button class="icon-btn" aria-label="Progresso">📊</button>
+    <button class="icon-btn" aria-label="Ranking">🏆</button>
+    <button class="icon-btn" aria-label="Configurações">⚙️</button>
+  </div>
+</header>
+
+<div class="page">
+  <div>
+    <section class="panel">
+      <div class="phead">
+        <div class="avatar"></div>
+        <div>
+          <h1>Paulo Souza <button class="edit" aria-label="Editar perfil">✏️</button></h1>
+          <div class="handle">@paulo · Belo Horizonte, MG</div>
+          <p class="bio">Corredor de fim de semana. Apaixonado por musculação. Sempre buscando meu próximo PR.</p>
+          <div class="specs"><span>Peso: 78 kg</span><span>Altura: 1,80 m</span><span>Idade: 28</span></div>
+        </div>
+      </div>
+      <div class="grid3">
+        <div class="kpi"><b>99</b><span>Treinos</span></div>
+        <div class="kpi"><b>3º</b><span>Ranking local</span></div>
+        <div class="kpi"><b>4d</b><span>Sequência</span></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Treinos recentes</h2>
+      <div class="tgrid">
+        <div class="tcard">
+          <div class="tt">🏋️ Musculação <span>— Peito</span></div>
+          <div class="td">Supino com 100 kg pela primeira vez!</div>
+          <div class="tm">
+            <div><b>60</b><span>min</span></div>
+            <div><b>100</b><span>kg máx</span></div>
+            <div><b>7</b><span>séries</span></div>
+          </div>
+          <div class="tacts"><button class="pill">Compartilhar</button><button class="pill danger">Excluir</button></div>
+        </div>
+        <div class="tcard">
+          <div class="tt">🏃 Cardio <span>— Corrida</span></div>
+          <div class="td">Corrida intensa no parque, ritmo bom.</div>
+          <div class="tm">
+            <div><b>45</b><span>min</span></div>
+            <div><b>8</b><span>km</span></div>
+            <div><b>1,3</b><span>incl.</span></div>
+          </div>
+          <div class="tacts"><button class="pill">Compartilhar</button><button class="pill danger">Excluir</button></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <aside>
+    <section class="panel lvl">
+      <h2>Nível</h2>
+      <b>profissional</b>
+      <div class="bar"><i></i></div>
+      <div class="f">Faltam 555 xp para o próximo nível</div>
+    </section>
+    <section class="panel">
+      <h2>Desafio diário</h2>
+      <div class="challenge"><b>15 polichinelos</b><br><b>20 flexões</b></div>
+      <button class="btn">Ver desafio</button>
+    </section>
+    <section class="panel">
+      <h2>Navegação</h2>
+      <ul class="side-links">
+        <li><a href="#">Perfil</a></li>
+        <li><a href="#">Ranking</a></li>
+        <li><a href="#">Grupos</a></li>
+        <li><a href="#">Configurações</a></li>
+      </ul>
+    </section>
+  </aside>
+</div>
+
+</body>
+</html>
