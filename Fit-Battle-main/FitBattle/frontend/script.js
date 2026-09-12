@@ -9,12 +9,24 @@ document.addEventListener('DOMContentLoaded', function () {
   const confirmaSenha = document.getElementById('confirmaSenha');
   const aceiteTermos = document.getElementById('aceiteTermos');
   const errorMessage = document.getElementById('errorMessage');
-  const botao = form.querySelector('.btn-cadastrar');
 
   const responsavelBox = document.getElementById('responsavelBox');
   const responsavelNome = document.getElementById('responsavelNome');
   const responsavelEmail = document.getElementById('responsavelEmail');
   const autorizacaoResponsavel = document.getElementById('autorizacaoResponsavel');
+
+  const overlayTermo = document.getElementById('overlayTermo');
+  const painelConsentimento = document.getElementById('painelConsentimento');
+  const painelLeitura = document.getElementById('painelLeitura');
+  const closeTermo = document.getElementById('closeTermo');
+  const linkLerTermoCompleto = document.getElementById('linkLerTermoCompleto');
+  const btnVoltarConsentimento = document.getElementById('btnVoltarConsentimento');
+  const btnCancelarTermo = document.getElementById('btnCancelarTermo');
+  const btnConfirmarCadastro = document.getElementById('btnConfirmarCadastro');
+  const erroModalTermo = document.getElementById('erroModalTermo');
+  const iframeTermo = document.getElementById('iframeTermo');
+
+  let dadosCadastroPendente = null;
 
   function atualizarResponsavel() {
     const n = Number(idade.value);
@@ -24,7 +36,51 @@ document.addEventListener('DOMContentLoaded', function () {
   idade.addEventListener('input', atualizarResponsavel);
   atualizarResponsavel();
 
-  form.addEventListener('submit', async function (event) {
+  function abrirModalConsentimento() {
+    painelLeitura.hidden = true;
+    painelConsentimento.hidden = false;
+    erroModalTermo.textContent = '';
+    overlayTermo.classList.add('aberto');
+  }
+
+  function abrirModalLeitura(ancora, vindoDoConsentimento) {
+    iframeTermo.src = 'termos.html#' + ancora;
+    painelConsentimento.hidden = true;
+    painelLeitura.hidden = false;
+    btnVoltarConsentimento.hidden = !vindoDoConsentimento;
+    overlayTermo.classList.add('aberto');
+  }
+
+  function fecharModalTermo() {
+    overlayTermo.classList.remove('aberto');
+    dadosCadastroPendente = null;
+  }
+
+  document.querySelectorAll('[data-abrir-termo]').forEach(function (link) {
+    link.addEventListener('click', function (event) {
+      event.preventDefault();
+      abrirModalLeitura(link.getAttribute('data-abrir-termo'), false);
+    });
+  });
+
+  linkLerTermoCompleto.addEventListener('click', function (event) {
+    event.preventDefault();
+    abrirModalLeitura('termo-uso', true);
+  });
+
+  btnVoltarConsentimento.addEventListener('click', function () {
+    painelLeitura.hidden = true;
+    painelConsentimento.hidden = false;
+  });
+
+  closeTermo.addEventListener('click', fecharModalTermo);
+  btnCancelarTermo.addEventListener('click', fecharModalTermo);
+
+  overlayTermo.addEventListener('click', function (event) {
+    if (event.target === overlayTermo) fecharModalTermo();
+  });
+
+  form.addEventListener('submit', function (event) {
     event.preventDefault();
     limparMensagem();
 
@@ -71,8 +127,23 @@ document.addEventListener('DOMContentLoaded', function () {
       return mostrarErro('As senhas não coincidem.', confirmaSenha);
     }
 
+    dadosCadastroPendente = {
+      nome: usuario.value.trim(),
+      email: email.value.trim(),
+      idade: idadeNum,
+      senha: senha.value,
+      responsavel: responsavel
+    };
+
+    abrirModalConsentimento();
+  });
+
+  btnConfirmarCadastro.addEventListener('click', async function () {
+    if (!dadosCadastroPendente) return;
+
     if (!aceiteTermos.checked) {
-      return mostrarErro('Você precisa ler e aceitar o Termo de Uso e o Termo de Consentimento.', aceiteTermos);
+      erroModalTermo.textContent = 'Você precisa ler e aceitar o Termo de Uso e o Termo de Consentimento.';
+      return;
     }
 
     const consentimentos = {};
@@ -80,46 +151,43 @@ document.addEventListener('DOMContentLoaded', function () {
       consentimentos[cb.value] = cb.checked;
     });
 
-    botao.disabled = true;
-    botao.textContent = 'ENVIANDO...';
-    let sucesso = false;
+    btnConfirmarCadastro.disabled = true;
+    btnConfirmarCadastro.textContent = 'ENVIANDO...';
+    erroModalTermo.textContent = '';
 
     try {
       const resposta = await fetch(`${API_URL}/usuarios`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome: usuario.value.trim(),
-          email: email.value.trim(),
-          idade: idadeNum,
-          senha: senha.value,
+          nome: dadosCadastroPendente.nome,
+          email: dadosCadastroPendente.email,
+          idade: dadosCadastroPendente.idade,
+          senha: dadosCadastroPendente.senha,
           aceite_termos: true,
           consentimentos: consentimentos,
-          responsavel: responsavel,
-          autorizacao_responsavel: responsavel !== null
+          responsavel: dadosCadastroPendente.responsavel,
+          autorizacao_responsavel: dadosCadastroPendente.responsavel !== null
         })
       });
 
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        mostrarErro(dados.erro || 'Não foi possível concluir o cadastro.');
+        erroModalTermo.textContent = dados.erro || 'Não foi possível concluir o cadastro.';
         return;
       }
 
-      sucesso = true;
+      fecharModalTermo();
       mostrarSucesso((dados.mensagem || 'Cadastro realizado com sucesso!') + ' Redirecionando para o login...');
       form.reset();
       atualizarResponsavel();
-      botao.textContent = 'REDIRECIONANDO...';
       setTimeout(function () { window.location.href = 'login.html'; }, 1500);
     } catch (erro) {
-      mostrarErro('Não foi possível conectar à API. Verifique se o backend está rodando (python app.py).');
+      erroModalTermo.textContent = 'Não foi possível conectar à API. Verifique se o backend está rodando (python app.py).';
     } finally {
-      if (!sucesso) {
-        botao.disabled = false;
-        botao.textContent = 'CADASTRE-SE';
-      }
+      btnConfirmarCadastro.disabled = false;
+      btnConfirmarCadastro.textContent = 'Confirmar cadastro';
     }
   });
 

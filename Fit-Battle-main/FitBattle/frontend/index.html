@@ -60,73 +60,6 @@
           <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Repita a senha" minlength="8" required>
         </div>
 
-        <fieldset class="consent-box">
-          <legend>Termo de Uso e Consentimento (LGPD)</legend>
-          <p class="consent-intro">
-            As permissões abaixo já vêm marcadas. <strong>Desmarque</strong> o que você
-            não autoriza — você pode mudar isso depois nas configurações.
-            <a href="termos.html#termo-uso" target="_blank" rel="noopener" class="terms-link">Termo de Uso</a> ·
-            <a href="termos.html#termo-consentimento" target="_blank" rel="noopener" class="terms-link">Termo de Consentimento</a>
-          </p>
-
-          <div class="consent-scroll">
-            <p class="consent-group-title">Obrigatórios <span>(necessários para a conta existir)</span></p>
-
-            <label class="consent-item is-locked">
-              <input type="checkbox" checked disabled>
-              <span>Criar, autenticar e manter a minha conta</span>
-            </label>
-            <label class="consent-item is-locked">
-              <input type="checkbox" checked disabled>
-              <span>Registrar e guardar meus treinos e histórico</span>
-            </label>
-            <label class="consent-item is-locked">
-              <input type="checkbox" checked disabled>
-              <span>Tratar dados de treino que possam revelar condição de saúde (art. 11 da LGPD)</span>
-            </label>
-            <label class="consent-item is-locked">
-              <input type="checkbox" checked disabled>
-              <span>Guardar registros técnicos de segurança e auditoria</span>
-            </label>
-
-            <p class="consent-group-title">Opcionais <span>(pode recusar sem perder o uso do app)</span></p>
-
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="ranking_publico" checked>
-              <span>Aparecer nos rankings regional e global</span>
-            </label>
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="localizacao" checked>
-              <span>Usar minha cidade/região no ranking regional</span>
-            </label>
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="chat_publico" checked>
-              <span>Participar dos chats públicos</span>
-            </label>
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="chat_privado_externo" checked>
-              <span>Receber mensagens privadas de quem não está nos meus grupos</span>
-            </label>
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="busca_perfil" checked>
-              <span>Permitir que outros usuários me encontrem pela busca</span>
-            </label>
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="notificacoes" checked>
-              <span>Receber notificações por push ou e-mail</span>
-            </label>
-            <label class="consent-item">
-              <input type="checkbox" name="consent" value="compartilhamento" checked>
-              <span>Compartilhar minhas conquistas em redes sociais</span>
-            </label>
-          </div>
-
-          <label class="consent-accept">
-            <input type="checkbox" id="aceiteTermos">
-            <span>Li e aceito o Termo de Uso e o Termo de Consentimento.</span>
-          </label>
-        </fieldset>
-
         <span class="error-message" id="errorMessage"></span>
 
         <button type="submit" class="btn-cadastrar">CADASTRE-SE</button>
@@ -136,8 +69,8 @@
         <p class="login-text">ja tem uma conta? <a href="login.html" class="login-link">Faça login</a></p>
         <p class="terms-text">
           Ao se cadastrar, você concorda com o
-          <a href="termos.html#termo-uso" target="_blank" rel="noopener" class="terms-link">Termo de Uso</a> e o
-          <a href="termos.html#termo-consentimento" target="_blank" rel="noopener" class="terms-link">Termo de Consentimento</a> do FitBattle.
+          <a href="#" class="terms-link" data-abrir-termo="termo-uso">Termo de Uso</a> e o
+          <a href="#" class="terms-link" data-abrir-termo="termo-consentimento">Termo de Consentimento</a> do FitBattle.
         </p>
       </div>
     </div>
@@ -166,6 +99,93 @@
       </div>
     </div>
 
+  </div>
+
+  <div class="overlay" id="overlayTermo">
+    <div class="modal-termo">
+      <button type="button" class="modal-close" id="closeTermo" aria-label="Fechar">&times;</button>
+
+      <div id="painelConsentimento">
+        <h2 class="modal-title">Termo de Uso e Consentimento (LGPD)</h2>
+        <p class="consent-intro">
+          As permissões abaixo já vêm marcadas. <strong>Desmarque</strong> o que você
+          não autoriza — você pode mudar isso depois nas configurações.
+          <a href="#" class="terms-link" id="linkLerTermoCompleto">Ler o termo completo</a>
+        </p>
+
+        <div class="consent-scroll">
+          <p class="consent-group-title">Obrigatórios <span>(necessários para a conta existir)</span></p>
+
+          <label class="consent-item is-locked">
+            <input type="checkbox" checked disabled>
+            <span>Criar, autenticar e manter a minha conta</span>
+          </label>
+          <label class="consent-item is-locked">
+            <input type="checkbox" checked disabled>
+            <span>Registrar e guardar meus treinos e histórico</span>
+          </label>
+          <label class="consent-item is-locked">
+            <input type="checkbox" checked disabled>
+            <span>Tratar dados de treino que possam revelar condição de saúde (art. 11 da LGPD)</span>
+          </label>
+          <label class="consent-item is-locked">
+            <input type="checkbox" checked disabled>
+            <span>Guardar registros técnicos de segurança e auditoria</span>
+          </label>
+
+          <p class="consent-group-title">Opcionais <span>(pode recusar sem perder o uso do app)</span></p>
+
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="ranking_publico" checked>
+            <span>Aparecer nos rankings regional e global</span>
+          </label>
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="localizacao" checked>
+            <span>Usar minha cidade/região no ranking regional</span>
+          </label>
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="chat_publico" checked>
+            <span>Participar dos chats públicos</span>
+          </label>
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="chat_privado_externo" checked>
+            <span>Receber mensagens privadas de quem não está nos meus grupos</span>
+          </label>
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="busca_perfil" checked>
+            <span>Permitir que outros usuários me encontrem pela busca</span>
+          </label>
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="notificacoes" checked>
+            <span>Receber notificações por push ou e-mail</span>
+          </label>
+          <label class="consent-item">
+            <input type="checkbox" name="consent" value="compartilhamento" checked>
+            <span>Compartilhar minhas conquistas em redes sociais</span>
+          </label>
+        </div>
+
+        <label class="consent-accept">
+          <input type="checkbox" id="aceiteTermos">
+          <span>Li e aceito o Termo de Uso e o Termo de Consentimento.</span>
+        </label>
+
+        <span class="error-message" id="erroModalTermo"></span>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secundario" id="btnCancelarTermo">Cancelar</button>
+          <button type="button" class="btn-cadastrar" id="btnConfirmarCadastro">Confirmar cadastro</button>
+        </div>
+      </div>
+
+      <div id="painelLeitura" hidden>
+        <div class="modal-leitura-head">
+          <button type="button" class="back-link-modal" id="btnVoltarConsentimento" hidden>&larr; Voltar</button>
+          <h2 class="modal-title">Termo de Uso e Termo de Consentimento</h2>
+        </div>
+        <iframe id="iframeTermo" title="Termo de Uso e Termo de Consentimento"></iframe>
+      </div>
+    </div>
   </div>
 
 </body>
