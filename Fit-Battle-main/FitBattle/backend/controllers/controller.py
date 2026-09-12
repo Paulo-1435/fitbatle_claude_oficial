@@ -2,8 +2,12 @@ from flask import current_app, jsonify, request
 
 from services.service import (
     AtividadeService,
+    ComentarioService,
     ConsentimentoService,
+    CurtidaService,
     ErroValidacao,
+    FeedService,
+    PostagemService,
     RankingService,
     UsuarioService,
 )
@@ -113,9 +117,95 @@ class AtividadeController:
 
     @staticmethod
     def excluir(id_atividade):
+        dados = request.get_json(silent=True) or {}
         try:
-            AtividadeService.excluir(id_atividade)
+            AtividadeService.excluir(dados.get("id_usuario"), id_atividade)
             return jsonify({"mensagem": "Atividade excluída.", "id": id_atividade})
+        except ErroValidacao as erro:
+            return jsonify({"erro": erro.mensagem}), erro.status
+
+
+class PostagemController:
+
+    @staticmethod
+    def criar():
+        try:
+            postagem = PostagemService.criar(
+                request.form.get("id_usuario", type=int),
+                request.form.get("texto"),
+                request.files.get("foto"),
+                current_app.config["UPLOAD_FOLDER"],
+            )
+            return jsonify({
+                "mensagem": "Postagem publicada!",
+                "postagem": postagem.to_dict(),
+            }), 201
+        except ErroValidacao as erro:
+            return jsonify({"erro": erro.mensagem}), erro.status
+
+    @staticmethod
+    def excluir(id_postagem):
+        dados = request.get_json(silent=True) or {}
+        try:
+            PostagemService.excluir(dados.get("id_usuario"), id_postagem)
+            return jsonify({"mensagem": "Postagem excluída.", "id": id_postagem})
+        except ErroValidacao as erro:
+            return jsonify({"erro": erro.mensagem}), erro.status
+
+
+class FeedController:
+
+    @staticmethod
+    def listar():
+        id_usuario = request.args.get("id_usuario", type=int)
+        limite = request.args.get("limite", 30)
+        return jsonify(FeedService.listar(id_usuario, limite))
+
+
+class CurtidaController:
+
+    @staticmethod
+    def alternar(tipo_alvo, id_alvo):
+        dados = request.get_json(silent=True) or {}
+        try:
+            resultado = CurtidaService.alternar(dados.get("id_usuario"), tipo_alvo, id_alvo)
+            return jsonify(resultado)
+        except ErroValidacao as erro:
+            return jsonify({"erro": erro.mensagem}), erro.status
+
+
+class ComentarioController:
+
+    @staticmethod
+    def listar(tipo_alvo, id_alvo):
+        try:
+            comentarios = ComentarioService.listar(tipo_alvo, id_alvo)
+            return jsonify(comentarios)
+        except ErroValidacao as erro:
+            return jsonify({"erro": erro.mensagem}), erro.status
+
+    @staticmethod
+    def criar(tipo_alvo, id_alvo):
+        dados = request.get_json(silent=True) or {}
+        try:
+            comentario = ComentarioService.criar(
+                dados.get("id_usuario"), tipo_alvo, id_alvo, dados.get("texto")
+            )
+            resultado = comentario.to_dict()
+            autor = UsuarioService.buscar(comentario.id_usuario)
+            resultado["usuario"] = {
+                "id": autor.id_usuario, "nome": autor.nome, "foto": autor.foto,
+            }
+            return jsonify({"mensagem": "Comentário publicado.", "comentario": resultado}), 201
+        except ErroValidacao as erro:
+            return jsonify({"erro": erro.mensagem}), erro.status
+
+    @staticmethod
+    def excluir(id_comentario):
+        dados = request.get_json(silent=True) or {}
+        try:
+            ComentarioService.excluir(dados.get("id_usuario"), id_comentario)
+            return jsonify({"mensagem": "Comentário excluído.", "id": id_comentario})
         except ErroValidacao as erro:
             return jsonify({"erro": erro.mensagem}), erro.status
 

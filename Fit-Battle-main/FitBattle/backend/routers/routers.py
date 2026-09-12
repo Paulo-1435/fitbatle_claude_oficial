@@ -2,7 +2,11 @@ from flask import Blueprint
 
 from controllers.controller import (
     AtividadeController,
+    ComentarioController,
     ConsentimentoController,
+    CurtidaController,
+    FeedController,
+    PostagemController,
     RankingController,
     UsuarioController,
 )
@@ -26,6 +30,15 @@ rota("/usuarios/<int:id_usuario>/atividades", "atividade_registrar", AtividadeCo
 rota("/usuarios/<int:id_usuario>/atividades", "atividade_historico", AtividadeController.historico, ["GET"])
 rota("/atividades/<int:id_atividade>", "atividade_buscar", AtividadeController.buscar, ["GET"])
 rota("/atividades/<int:id_atividade>", "atividade_excluir", AtividadeController.excluir, ["DELETE"])
+
+rota("/postagens", "postagem_criar", PostagemController.criar, ["POST"])
+rota("/postagens/<int:id_postagem>", "postagem_excluir", PostagemController.excluir, ["DELETE"])
+
+rota("/feed", "feed_listar", FeedController.listar, ["GET"])
+rota("/feed/<tipo_alvo>/<int:id_alvo>/curtir", "curtida_alternar", CurtidaController.alternar, ["POST"])
+rota("/feed/<tipo_alvo>/<int:id_alvo>/comentarios", "comentario_listar", ComentarioController.listar, ["GET"])
+rota("/feed/<tipo_alvo>/<int:id_alvo>/comentarios", "comentario_criar", ComentarioController.criar, ["POST"])
+rota("/comentarios/<int:id_comentario>", "comentario_excluir", ComentarioController.excluir, ["DELETE"])
 
 rota("/ranking/global", "ranking_global", RankingController.ranking_global, ["GET"])
 rota("/ranking/regional", "ranking_regional", RankingController.ranking_regional, ["GET"])

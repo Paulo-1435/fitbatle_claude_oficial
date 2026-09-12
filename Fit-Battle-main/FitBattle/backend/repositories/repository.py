@@ -1,7 +1,7 @@
-from sqlalchemy import text
+from sqlalchemy import func, text
 
 from database import db
-from models.model import Atividade, Consentimento, Usuario
+from models.model import Atividade, Comentario, Consentimento, Curtida, Postagem, Usuario
 
 _COLUNAS_RANKING = "id_usuario, nome, cidade, estado, pontuacao_total, posicao"
 
@@ -103,6 +103,148 @@ class AtividadeRepository:
     @staticmethod
     def excluir(atividade):
         db.session.delete(atividade)
+        db.session.commit()
+
+    @staticmethod
+    def listar_publicas(limite):
+        return (
+            Atividade.query.join(Usuario, Atividade.id_usuario == Usuario.id_usuario)
+            .filter(Usuario.perfil_publico.is_(True))
+            .order_by(Atividade.data_registro.desc())
+            .limit(limite)
+            .all()
+        )
+
+
+class PostagemRepository:
+
+    @staticmethod
+    def buscar_por_id(id_postagem):
+        return db.session.get(Postagem, id_postagem)
+
+    @staticmethod
+    def criar(id_usuario, texto, foto):
+        postagem = Postagem(id_usuario=id_usuario, texto=texto, foto=foto)
+        db.session.add(postagem)
+        db.session.commit()
+        return postagem
+
+    @staticmethod
+    def excluir(postagem):
+        db.session.delete(postagem)
+        db.session.commit()
+
+    @staticmethod
+    def listar_publicas(limite):
+        return (
+            Postagem.query.join(Usuario, Postagem.id_usuario == Usuario.id_usuario)
+            .filter(Usuario.perfil_publico.is_(True))
+            .order_by(Postagem.data_registro.desc())
+            .limit(limite)
+            .all()
+        )
+
+
+class CurtidaRepository:
+
+    @staticmethod
+    def buscar(id_usuario, tipo_alvo, id_alvo):
+        return Curtida.query.filter_by(
+            id_usuario=id_usuario, tipo_alvo=tipo_alvo, id_alvo=id_alvo
+        ).first()
+
+    @staticmethod
+    def curtir(id_usuario, tipo_alvo, id_alvo):
+        curtida = Curtida(id_usuario=id_usuario, tipo_alvo=tipo_alvo, id_alvo=id_alvo)
+        db.session.add(curtida)
+        db.session.commit()
+        return curtida
+
+    @staticmethod
+    def descurtir(curtida):
+        db.session.delete(curtida)
+        db.session.commit()
+
+    @staticmethod
+    def contar(tipo_alvo, id_alvo):
+        return Curtida.query.filter_by(tipo_alvo=tipo_alvo, id_alvo=id_alvo).count()
+
+    @staticmethod
+    def contar_em_lote(tipo_alvo, ids_alvo):
+        if not ids_alvo:
+            return {}
+        linhas = (
+            db.session.query(Curtida.id_alvo, func.count(Curtida.id_curtida))
+            .filter(Curtida.tipo_alvo == tipo_alvo, Curtida.id_alvo.in_(ids_alvo))
+            .group_by(Curtida.id_alvo)
+            .all()
+        )
+        return {id_alvo: total for id_alvo, total in linhas}
+
+    @staticmethod
+    def curtidos_pelo_usuario(id_usuario, tipo_alvo, ids_alvo):
+        if not ids_alvo:
+            return set()
+        linhas = (
+            db.session.query(Curtida.id_alvo)
+            .filter(
+                Curtida.id_usuario == id_usuario,
+                Curtida.tipo_alvo == tipo_alvo,
+                Curtida.id_alvo.in_(ids_alvo),
+            )
+            .all()
+        )
+        return {id_alvo for (id_alvo,) in linhas}
+
+    @staticmethod
+    def excluir_do_alvo(tipo_alvo, id_alvo):
+        Curtida.query.filter_by(tipo_alvo=tipo_alvo, id_alvo=id_alvo).delete()
+        db.session.commit()
+
+
+class ComentarioRepository:
+
+    @staticmethod
+    def buscar_por_id(id_comentario):
+        return db.session.get(Comentario, id_comentario)
+
+    @staticmethod
+    def criar(id_usuario, tipo_alvo, id_alvo, texto):
+        comentario = Comentario(
+            id_usuario=id_usuario, tipo_alvo=tipo_alvo, id_alvo=id_alvo, texto=texto
+        )
+        db.session.add(comentario)
+        db.session.commit()
+        return comentario
+
+    @staticmethod
+    def excluir(comentario):
+        db.session.delete(comentario)
+        db.session.commit()
+
+    @staticmethod
+    def listar(tipo_alvo, id_alvo):
+        return (
+            Comentario.query.filter_by(tipo_alvo=tipo_alvo, id_alvo=id_alvo)
+            .order_by(Comentario.data_registro.asc())
+            .all()
+        )
+
+    @staticmethod
+    def contar_em_lote(tipo_alvo, ids_alvo):
+        if not ids_alvo:
+            return {}
+        linhas = (
+            db.session.query(Comentario.id_alvo, func.count(Comentario.id_comentario))
+            .filter(Comentario.tipo_alvo == tipo_alvo, Comentario.id_alvo.in_(ids_alvo))
+            .group_by(Comentario.id_alvo)
+            .all()
+        )
+        return {id_alvo: total for id_alvo, total in linhas}
+
+    @staticmethod
+    def excluir_do_alvo(tipo_alvo, id_alvo):
+        Comentario.query.filter_by(tipo_alvo=tipo_alvo, id_alvo=id_alvo).delete()
         db.session.commit()
 
 

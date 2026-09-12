@@ -47,6 +47,42 @@ CREATE TABLE atividade (
     INDEX idx_atividade_usuario_data (id_usuario, data_registro)
 ) ENGINE=InnoDB;
 
+CREATE TABLE postagem (
+    id_postagem    INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario     INT NOT NULL,
+    texto          VARCHAR(1000) NOT NULL,
+    foto           VARCHAR(255),
+    data_registro  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_postagem_usuario
+        FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
+        ON DELETE CASCADE,
+    INDEX idx_postagem_usuario_data (id_usuario, data_registro)
+) ENGINE=InnoDB;
+
+CREATE TABLE curtida (
+    id_curtida     INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario     INT NOT NULL,
+    tipo_alvo      ENUM('atividade','postagem') NOT NULL,
+    id_alvo        INT NOT NULL,
+    data_registro  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_curtida_usuario
+        FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    UNIQUE KEY uq_curtida_usuario_alvo (id_usuario, tipo_alvo, id_alvo),
+    INDEX idx_curtida_alvo (tipo_alvo, id_alvo)
+) ENGINE=InnoDB;
+
+CREATE TABLE comentario (
+    id_comentario  INT AUTO_INCREMENT PRIMARY KEY,
+    id_usuario     INT NOT NULL,
+    tipo_alvo      ENUM('atividade','postagem') NOT NULL,
+    id_alvo        INT NOT NULL,
+    texto          VARCHAR(500) NOT NULL,
+    data_registro  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_comentario_usuario
+        FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE,
+    INDEX idx_comentario_alvo (tipo_alvo, id_alvo)
+) ENGINE=InnoDB;
+
 CREATE TABLE consentimento (
     id_consentimento INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario       INT NOT NULL,

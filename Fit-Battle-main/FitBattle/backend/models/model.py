@@ -108,6 +108,69 @@ class Atividade(db.Model):
         }
 
 
+class Postagem(db.Model):
+    __tablename__ = "postagem"
+
+    id_postagem = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    texto = db.Column(db.String(1000), nullable=False)
+    foto = db.Column(db.String(255))
+    data_registro = db.Column(db.DateTime, nullable=False, default=_agora)
+
+    def to_dict(self):
+        return {
+            "id": self.id_postagem,
+            "id_usuario": self.id_usuario,
+            "texto": self.texto,
+            "foto": self.foto,
+            "data_registro": self.data_registro.isoformat() if self.data_registro else None,
+        }
+
+
+class Curtida(db.Model):
+    __tablename__ = "curtida"
+    __table_args__ = (
+        db.UniqueConstraint("id_usuario", "tipo_alvo", "id_alvo", name="uq_curtida_usuario_alvo"),
+    )
+
+    id_curtida = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    tipo_alvo = db.Column(db.String(20), nullable=False)
+    id_alvo = db.Column(db.Integer, nullable=False)
+    data_registro = db.Column(db.DateTime, nullable=False, default=_agora)
+
+
+class Comentario(db.Model):
+    __tablename__ = "comentario"
+
+    id_comentario = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    tipo_alvo = db.Column(db.String(20), nullable=False)
+    id_alvo = db.Column(db.Integer, nullable=False)
+    texto = db.Column(db.String(500), nullable=False)
+    data_registro = db.Column(db.DateTime, nullable=False, default=_agora)
+
+    def to_dict(self):
+        return {
+            "id": self.id_comentario,
+            "id_usuario": self.id_usuario,
+            "texto": self.texto,
+            "data_registro": self.data_registro.isoformat() if self.data_registro else None,
+        }
+
+
 class Consentimento(db.Model):
     __tablename__ = "consentimento"
     __table_args__ = (
