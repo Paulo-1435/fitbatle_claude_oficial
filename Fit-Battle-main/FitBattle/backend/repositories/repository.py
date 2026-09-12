@@ -1,5 +1,3 @@
-"""Camada Repository - único ponto de acesso ao banco de dados."""
-
 from sqlalchemy import text
 
 from database import db
@@ -137,7 +135,6 @@ class ConsentimentoRepository:
 
 
 def _linha_ranking(linha):
-    """Converte a linha da view em dict com números inteiros."""
     if linha is None:
         return None
     d = dict(linha)
@@ -149,7 +146,6 @@ def _linha_ranking(linha):
 
 
 class RankingRepository:
-    """Lê as views vw_ranking_global e vw_ranking_regional (RF09, RF10, RF11)."""
 
     @staticmethod
     def global_(limite):

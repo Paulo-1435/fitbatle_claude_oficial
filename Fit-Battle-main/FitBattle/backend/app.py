@@ -1,14 +1,3 @@
-"""
-Ponto de entrada da API do FitBattle.
-
-Antes de rodar:
-  1. Crie o banco no MySQL:  mysql -u root -p < database/create_database.sql
-  2. Instale as dependências: pip install -r requirements.txt
-  3. (Opcional) configure as variáveis de ambiente do banco:
-        DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME
-  4. python app.py   ->   http://localhost:5000
-"""
-
 import os
 from urllib.parse import quote_plus
 
@@ -18,7 +7,6 @@ from flask_cors import CORS
 from database import db
 from routers.routers import Fitbattle_bp
 
-# Pasta onde ficam as fotos de perfil enviadas pelos usuários
 PASTA_UPLOAD = os.path.join(os.path.dirname(__file__), "uploads")
 
 
@@ -38,7 +26,7 @@ def criar_app():
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-fitbattle-trocar-em-producao")
     app.config["UPLOAD_FOLDER"] = PASTA_UPLOAD
-    app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024  # limite de 3 MB por upload
+    app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024
 
     os.makedirs(PASTA_UPLOAD, exist_ok=True)
 
@@ -47,8 +35,7 @@ def criar_app():
 
     app.register_blueprint(Fitbattle_bp)
 
-    # Importa os models para que o SQLAlchemy os conheça
-    from models.model import Usuario  # noqa: F401
+    from models.model import Usuario
 
     with app.app_context():
         db.create_all()

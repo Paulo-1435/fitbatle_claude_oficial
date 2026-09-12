@@ -1,5 +1,3 @@
-"""Camada Model - mapeia a tabela `usuario` do banco FitBattle."""
-
 from datetime import datetime, timezone
 
 from database import db
@@ -15,10 +13,10 @@ class Usuario(db.Model):
     id_usuario = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(120), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
-    senha = db.Column(db.String(255), nullable=False)          # armazena o HASH
+    senha = db.Column(db.String(255), nullable=False)
     idade = db.Column(db.SmallInteger)
-    peso = db.Column(db.Numeric(5, 2))       # kg
-    altura = db.Column(db.Numeric(3, 2))     # metros
+    peso = db.Column(db.Numeric(5, 2))
+    altura = db.Column(db.Numeric(3, 2))
     cidade = db.Column(db.String(100))
     estado = db.Column(db.String(2))
     foto = db.Column(db.String(255))
@@ -46,7 +44,6 @@ class Usuario(db.Model):
     )
 
     def to_dict(self):
-        """Versão segura para enviar ao frontend (sem a senha)."""
         return {
             "id": self.id_usuario,
             "nome": self.nome,
@@ -112,8 +109,6 @@ class Atividade(db.Model):
 
 
 class Consentimento(db.Model):
-    """Registro granular de consentimento LGPD - uma linha por finalidade."""
-
     __tablename__ = "consentimento"
     __table_args__ = (
         db.UniqueConstraint("id_usuario", "chave", name="uq_consent_usuario_chave"),

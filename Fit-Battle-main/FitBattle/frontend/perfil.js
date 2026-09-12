@@ -1,10 +1,7 @@
-// URL base da API Flask
 const API_URL = 'http://localhost:5000/api';
-// Mesma origem, sem o /api (para as fotos servidas em /uploads/...)
 const ORIGEM_API = API_URL.replace(/\/api\/?$/, '');
-const TAMANHO_MAX_FOTO = 3 * 1024 * 1024; // 3 MB
+const TAMANHO_MAX_FOTO = 3 * 1024 * 1024;
 
-// Faixas de XP -> nível (iguais às do backend, service.py)
 const FAIXAS_NIVEL = [
   [0, 'iniciante'],
   [1000, 'intermediario'],
@@ -13,7 +10,6 @@ const FAIXAS_NIVEL = [
   [15000, 'elite']
 ];
 
-// Emoji e nome legível por tipo de treino
 const EMOJI_TIPO = {
   musculacao: '🏋️',
   cardio: '🏃',
@@ -28,10 +24,9 @@ const NOME_TIPO = {
 };
 
 let usuarioLogado = null;
-let fotoSelecionada = null; // arquivo de imagem escolhido no modal de editar perfil
+let fotoSelecionada = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-  // ---------- Proteção de rota ----------
   usuarioLogado = lerUsuarioLocal();
   if (!usuarioLogado) {
     window.location.href = 'login.html';
@@ -48,17 +43,13 @@ document.addEventListener('DOMContentLoaded', function () {
   carregarRankingLocal();
 });
 
-/* ============================================================
-   Avatar: ampliar a foto / trocar / atalho para o topo
-   ============================================================ */
-
 function configurarAvatar() {
   ligar('avatarLarge', 'click', function () {
     if (usuarioLogado && usuarioLogado.foto) {
       document.getElementById('fotoAmpliada').src = urlFoto(usuarioLogado.foto);
       abrirOverlay('overlayFoto');
     } else {
-      abrirEditarPerfil(); // sem foto ainda -> vai direto pro editar
+      abrirEditarPerfil();
     }
   });
 
@@ -72,10 +63,6 @@ function configurarAvatar() {
     abrirEditarPerfil();
   });
 }
-
-/* ============================================================
-   Carregar dados
-   ============================================================ */
 
 async function carregarPerfil() {
   try {
@@ -136,7 +123,6 @@ async function carregarRankingLocal() {
     const pos = dados.regional && dados.regional.posicao;
     document.getElementById('statRanking').textContent = pos ? pos + 'º' : '—';
   } catch (e) {
-    /* mantém o "—" */
   }
 }
 
@@ -144,7 +130,6 @@ function renderizarTreinos(treinos) {
   const lista = document.getElementById('listaTreinos');
   const vazia = document.getElementById('listaVazia');
 
-  // limpa os cards antigos, mantém o parágrafo "lista vazia"
   lista.querySelectorAll('.activity-card').forEach(function (el) { el.remove(); });
 
   if (treinos.length === 0) {
@@ -218,10 +203,6 @@ function metrica(valor, unidade, rotulo) {
   </div>`;
 }
 
-/* ============================================================
-   Ações
-   ============================================================ */
-
 async function excluirTreino(id) {
   if (!confirm('Excluir este treino? A pontuação dele será descontada.')) return;
   try {
@@ -252,7 +233,6 @@ function ajustarCamposTreino() {
 }
 
 function configurarModais() {
-  // abre / fecha
   ligar('btnNovoTreino', 'click', abrirNovoTreino);
   ligar('treinoTipo', 'change', ajustarCamposTreino);
   ligar('closeTreino', 'click', function () { fecharOverlay('overlayTreino'); });
@@ -260,7 +240,6 @@ function configurarModais() {
   ligar('btnEditarPerfilMenu', 'click', abrirEditarPerfil);
   ligar('closePerfil', 'click', function () { fecharOverlay('overlayPerfil'); });
 
-  // seleção da foto de perfil
   ligar('fotoBtn', 'click', function () { document.getElementById('fotoInput').click(); });
   ligar('fotoInput', 'change', function () {
     const arquivo = this.files && this.files[0];
@@ -283,7 +262,6 @@ function configurarModais() {
     });
   });
 
-  // submit novo treino
   document.getElementById('formTreino').addEventListener('submit', async function (e) {
     e.preventDefault();
     const erro = document.getElementById('erroTreino');
@@ -291,7 +269,6 @@ function configurarModais() {
 
     const titulo = document.getElementById('treinoTitulo').value.trim();
 
-    // Duração: horas + minutos
     const horas = numero(document.getElementById('treinoHoras').value) || 0;
     const minutos = numero(document.getElementById('treinoMinutos').value) || 0;
     if (minutos < 0 || minutos > 59) {
@@ -301,7 +278,6 @@ function configurarModais() {
     if (horas < 0) { erro.textContent = 'Duração inválida.'; return; }
     const tempoMin = (horas * 60 + minutos) || null;
 
-    // Distância: km + metros
     const km = numero(document.getElementById('treinoKm').value) || 0;
     const metros = numero(document.getElementById('treinoMetros').value) || 0;
     if (metros < 0 || metros > 999) {
@@ -347,7 +323,6 @@ function configurarModais() {
     }
   });
 
-  // submit editar perfil
   document.getElementById('formPerfil').addEventListener('submit', async function (e) {
     e.preventDefault();
     const erro = document.getElementById('erroPerfil');
@@ -374,7 +349,6 @@ function configurarModais() {
 
       let usuarioFinal = dados.usuario;
 
-      // se escolheu uma foto nova, envia em seguida
       if (fotoSelecionada) {
         const fd = new FormData();
         fd.append('foto', fotoSelecionada);
@@ -414,7 +388,6 @@ function abrirEditarPerfil() {
   document.getElementById('editAltura').value = u.altura != null ? u.altura : '';
   document.getElementById('erroPerfil').textContent = '';
 
-  // reseta a seleção de foto e mostra a foto atual na prévia
   fotoSelecionada = null;
   document.getElementById('fotoInput').value = '';
   document.getElementById('fotoNome').textContent = 'JPG, PNG ou WEBP (até 3 MB)';
@@ -422,10 +395,6 @@ function abrirEditarPerfil() {
 
   abrirOverlay('overlayPerfil');
 }
-
-/* ============================================================
-   Menu lateral
-   ============================================================ */
 
 function configurarMenu() {
   const sidebar = document.getElementById('configSidebar');
@@ -440,7 +409,7 @@ function configurarMenu() {
     main.classList.add('menu-fechado');
   }
 
-  fechar(); // começa fechado
+  fechar();
 
   document.getElementById('toggleMenuBtn').addEventListener('click', function () {
     if (sidebar.classList.contains('escondida')) abrir();
@@ -463,13 +432,9 @@ function configurarMenu() {
 }
 
 function sair() {
-  try { localStorage.removeItem('fitbattle_usuario'); } catch (e) { /* ignora */ }
+  try { localStorage.removeItem('fitbattle_usuario'); } catch (e) {}
   window.location.href = 'login.html';
 }
-
-/* ============================================================
-   Ranking (RF10 regional / RF11 global)
-   ============================================================ */
 
 function configurarRanking() {
   ligar('btnRanking', 'click', abrirRanking);
@@ -534,10 +499,6 @@ async function carregarRanking(escopo) {
   }
 }
 
-/* ============================================================
-   Cálculos
-   ============================================================ */
-
 function calcularNivel(xp) {
   let indice = 0;
   for (let i = 0; i < FAIXAS_NIVEL.length; i++) {
@@ -579,10 +540,6 @@ function calcularSequencia(treinos) {
   return sequencia;
 }
 
-/* ============================================================
-   Utilidades
-   ============================================================ */
-
 function lerUsuarioLocal() {
   try {
     const bruto = localStorage.getItem('fitbattle_usuario');
@@ -593,7 +550,7 @@ function lerUsuarioLocal() {
 }
 
 function salvarUsuarioLocal(u) {
-  try { localStorage.setItem('fitbattle_usuario', JSON.stringify(u)); } catch (e) { /* ignora */ }
+  try { localStorage.setItem('fitbattle_usuario', JSON.stringify(u)); } catch (e) {}
 }
 
 function texto(id, valor) {
@@ -643,14 +600,12 @@ function formatarNumero(n) {
   return Number(n).toString().replace('.', ',');
 }
 
-// Converte o texto de um campo numérico em número (aceita vírgula) ou null
 function numero(valor) {
   if (valor === null || valor === undefined || String(valor).trim() === '') return null;
   const n = parseFloat(String(valor).replace(',', '.'));
   return isNaN(n) ? null : n;
 }
 
-// Duração: até 59 min mostra "45 / min"; a partir de 60 vira "1h05" / "2h"
 function partesDuracao(min) {
   min = Number(min);
   if (min < 60) return { v: String(min), u: 'min' };
@@ -659,7 +614,6 @@ function partesDuracao(min) {
   return { v: resto === 0 ? horas + 'h' : horas + 'h' + String(resto).padStart(2, '0'), u: '' };
 }
 
-// Distância: 1 km ou mais mostra em km; abaixo disso mostra em metros
 function partesDistancia(km) {
   const n = Number(km);
   if (n >= 1) return { v: formatarNumero(n), u: 'km' };

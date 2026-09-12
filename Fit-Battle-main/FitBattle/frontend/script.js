@@ -1,4 +1,3 @@
-// URL base da API Flask (backend/app.py roda na porta 5000)
 const API_URL = 'http://localhost:5000/api';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -12,7 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
   const errorMessage = document.getElementById('errorMessage');
   const botao = form.querySelector('.btn-cadastrar');
 
-  // Campos do responsável legal (aparecem só para 13 a 17 anos)
   const responsavelBox = document.getElementById('responsavelBox');
   const responsavelNome = document.getElementById('responsavelNome');
   const responsavelEmail = document.getElementById('responsavelEmail');
@@ -30,7 +28,6 @@ document.addEventListener('DOMContentLoaded', function () {
     event.preventDefault();
     limparMensagem();
 
-    // ---------- Validações no navegador ----------
     if (usuario.value.trim().length < 3) {
       return mostrarErro('Informe um nome com pelo menos 3 caracteres.', usuario);
     }
@@ -49,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function () {
       return mostrarErro('O cadastro não é permitido para menores de 13 anos (art. 14 da LGPD).', idade);
     }
 
-    // Autorização do responsável legal para 13 a 17 anos
     let responsavel = null;
     if (idadeNum >= 13 && idadeNum < 18) {
       if (responsavelNome.value.trim().length < 3) {
@@ -79,13 +75,11 @@ document.addEventListener('DOMContentLoaded', function () {
       return mostrarErro('Você precisa ler e aceitar o Termo de Uso e o Termo de Consentimento.', aceiteTermos);
     }
 
-    // Consentimentos opcionais que ficaram marcados na caixa
     const consentimentos = {};
     document.querySelectorAll('input[name="consent"]').forEach(function (cb) {
       consentimentos[cb.value] = cb.checked;
     });
 
-    // ---------- Envio para o backend ----------
     botao.disabled = true;
     botao.textContent = 'ENVIANDO...';
     let sucesso = false;

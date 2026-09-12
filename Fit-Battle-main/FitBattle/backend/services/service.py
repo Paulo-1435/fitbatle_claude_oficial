@@ -1,5 +1,3 @@
-"""Camada Service - regras de negócio e validação do FitBattle."""
-
 import os
 import re
 import time
@@ -16,14 +14,11 @@ from repositories.repository import (
 
 EMAIL_REGEX = r"^[^\s@]+@[^\s@]+\.[^\s@]+$"
 
-# Faixa etária (Termo de Uso, Cláusula 13 / art. 14 da LGPD)
 IDADE_MINIMA_CADASTRO = 13
 IDADE_MAIORIDADE = 18
 
-# Formatos de imagem aceitos para a foto de perfil
 EXTENSOES_FOTO = {"png", "jpg", "jpeg", "webp"}
 
-# Faixas de XP acumulado -> nível (RF13). (xp_mínimo, nome)
 FAIXAS_NIVEL = [
     (0, "iniciante"),
     (1000, "intermediario"),
@@ -32,9 +27,6 @@ FAIXAS_NIVEL = [
     (15000, "elite"),
 ]
 
-# Consentimentos LGPD (Termo de Uso, Cláusula Sexta / Termo de Consentimento,
-# Cláusula Segunda). Os obrigatórios são gravados sempre como aceitos; os
-# opcionais vêm marcados por padrão e o usuário pode desmarcar.
 CONSENTIMENTOS_OBRIGATORIOS = {
     "conta_autenticacao": "Criar, autenticar e manter a minha conta",
     "registro_atividades": "Registrar e armazenar meus treinos",
@@ -66,7 +58,6 @@ def nivel_por_xp(xp):
 
 
 class ErroValidacao(Exception):
-    """Erro de regra de negócio. `status` vira o código HTTP na resposta."""
 
     def __init__(self, mensagem, status=400):
         super().__init__(mensagem)
@@ -76,7 +67,6 @@ class ErroValidacao(Exception):
 
 class UsuarioService:
 
-    # ---------- cadastro (RF01) ----------
     @staticmethod
     def cadastrar(dados):
         dados = dados or {}
@@ -87,14 +77,12 @@ class UsuarioService:
                 "É necessário ler e aceitar o Termo de Uso e o Termo de Consentimento."
             )
 
-        # faixa etária e autorização do responsável legal (art. 14 da LGPD)
         limpos.update(UsuarioService._validar_faixa_etaria(limpos["idade"], dados))
 
         if UsuarioRepository.buscar_por_email(limpos["email"]):
             raise ErroValidacao("E-mail já cadastrado.", status=409)
 
         consentimentos = dados.get("consentimentos") or {}
-        # sem consentimento de ranking público, o perfil não entra nos rankings
         limpos["perfil_publico"] = bool(consentimentos.get("ranking_publico", True))
 
         limpos["senha"] = generate_password_hash(limpos["senha"])
@@ -102,7 +90,6 @@ class UsuarioService:
         ConsentimentoService.registrar_iniciais(usuario.id_usuario, consentimentos)
         return usuario
 
-    # ---------- login (RF02) ----------
     @staticmethod
     def autenticar(email, senha):
         usuario = UsuarioRepository.buscar_por_email((email or "").strip())
@@ -110,7 +97,6 @@ class UsuarioService:
             raise ErroValidacao("E-mail ou senha incorretos.", status=401)
         return usuario
 
-    # ---------- consulta ----------
     @staticmethod
     def listar(filtro_nome=None):
         return UsuarioRepository.listar(filtro_nome)
@@ -122,7 +108,6 @@ class UsuarioService:
             raise ErroValidacao("Usuário não encontrado.", status=404)
         return usuario
 
-    # ---------- atualização (RF03) ----------
     @staticmethod
     def atualizar(id_usuario, dados):
         usuario = UsuarioService.buscar(id_usuario)
@@ -155,7 +140,6 @@ class UsuarioService:
 
         return UsuarioRepository.atualizar(usuario, dados)
 
-    # ---------- foto de perfil (RF03) ----------
     @staticmethod
     def salvar_foto(id_usuario, arquivo, pasta_destino):
         usuario = UsuarioService.buscar(id_usuario)
@@ -171,7 +155,6 @@ class UsuarioService:
 
         os.makedirs(pasta_destino, exist_ok=True)
 
-        # apaga qualquer foto anterior deste usuário
         prefixo = f"usuario_{id_usuario}"
         for nome_arquivo in os.listdir(pasta_destino):
             if nome_arquivo.startswith(prefixo + "_") or nome_arquivo.startswith(prefixo + "."):
@@ -186,13 +169,11 @@ class UsuarioService:
         usuario.foto = "/uploads/" + nome
         return UsuarioRepository.salvar(usuario)
 
-    # ---------- exclusão ----------
     @staticmethod
     def excluir(id_usuario):
         usuario = UsuarioService.buscar(id_usuario)
         UsuarioRepository.excluir(usuario)
 
-    # ---------- estatísticas ----------
     @staticmethod
     def estatisticas():
         usuarios = UsuarioRepository.listar()
@@ -200,7 +181,6 @@ class UsuarioService:
         media_xp = round(sum(u.xp for u in usuarios) / total, 2) if total else 0
         return {"total_usuarios": total, "media_xp": media_xp}
 
-    # ---------- helpers ----------
     @staticmethod
     def _validar(dados, senha_obrigatoria):
         if not dados:
@@ -255,7 +235,6 @@ class UsuarioService:
 
     @staticmethod
     def _validar_faixa_etaria(idade, dados):
-        """Regras de idade do art. 14 da LGPD. Devolve os campos do responsável."""
         if idade is None:
             raise ErroValidacao("Informe a idade.")
 
@@ -267,7 +246,6 @@ class UsuarioService:
         if idade >= IDADE_MAIORIDADE:
             return {}
 
-        # adolescente de 13 a 17 anos: exige autorização do responsável legal
         responsavel = dados.get("responsavel") or {}
         nome = (responsavel.get("nome") or "").strip()
         email = (responsavel.get("email") or "").strip()
@@ -289,11 +267,9 @@ class UsuarioService:
 
 
 class AtividadeService:
-    """Registro de treinos (RF04), histórico (RF05), pontuação (RF12)."""
 
     TIPOS_VALIDOS = {"musculacao", "cardio", "yoga", "outro"}
 
-    # ---------- registrar treino (RF04 + RF12 + RF13) ----------
     @staticmethod
     def registrar(id_usuario, dados):
         usuario = UsuarioService.buscar(id_usuario)
@@ -302,17 +278,15 @@ class AtividadeService:
         limpos["pontuacao"] = AtividadeService.calcular_pontuacao(limpos)
         atividade = AtividadeRepository.criar(id_usuario, limpos)
 
-        # atualiza XP acumulado e recalcula o nível automaticamente
         usuario.xp += atividade.pontuacao
         usuario.nivel = nivel_por_xp(usuario.xp)
         UsuarioRepository.salvar(usuario)
 
         return atividade, usuario
 
-    # ---------- histórico (RF05) ----------
     @staticmethod
     def historico(id_usuario):
-        UsuarioService.buscar(id_usuario)  # garante que o usuário existe
+        UsuarioService.buscar(id_usuario)
         return AtividadeRepository.listar_do_usuario(id_usuario)
 
     @staticmethod
@@ -322,7 +296,6 @@ class AtividadeService:
             raise ErroValidacao("Atividade não encontrada.", status=404)
         return atividade
 
-    # ---------- excluir treino (desconta a pontuação) ----------
     @staticmethod
     def excluir(id_atividade):
         atividade = AtividadeService.buscar(id_atividade)
@@ -333,7 +306,6 @@ class AtividadeService:
             UsuarioRepository.salvar(usuario)
         AtividadeRepository.excluir(atividade)
 
-    # ---------- RF12: cálculo automático da pontuação ----------
     @staticmethod
     def calcular_pontuacao(dados):
         tempo = dados.get("tempo_min") or 0
@@ -348,7 +320,6 @@ class AtividadeService:
 
         return max(10, round(pontos))
 
-    # ---------- validação ----------
     @staticmethod
     def _validar(dados):
         if not dados:
@@ -386,9 +357,7 @@ class AtividadeService:
 
 
 class ConsentimentoService:
-    """Consentimento LGPD granular (Termo de Uso/Consentimento)."""
 
-    # ---------- gravado no cadastro ----------
     @staticmethod
     def registrar_iniciais(id_usuario, escolhas):
         escolhas = escolhas or {}
@@ -404,18 +373,16 @@ class ConsentimentoService:
             registros.append({
                 "chave": chave, "descricao": descricao,
                 "obrigatorio": False,
-                "aceito": bool(escolhas.get(chave, True)),  # marcado por padrão
+                "aceito": bool(escolhas.get(chave, True)),
             })
 
         return ConsentimentoRepository.criar_varios(id_usuario, registros)
 
-    # ---------- consulta ----------
     @staticmethod
     def listar(id_usuario):
         UsuarioService.buscar(id_usuario)
         return ConsentimentoRepository.listar_do_usuario(id_usuario)
 
-    # ---------- revogar / reativar um consentimento opcional ----------
     @staticmethod
     def atualizar(id_usuario, chave, aceito):
         UsuarioService.buscar(id_usuario)
@@ -438,7 +405,6 @@ class ConsentimentoService:
         registro.data_atualizacao = _agora()
         ConsentimentoRepository.salvar(registro)
 
-        # a visibilidade pública do perfil acompanha o consentimento de ranking
         if chave == "ranking_publico":
             usuario = UsuarioRepository.buscar_por_id(id_usuario)
             usuario.perfil_publico = registro.aceito
@@ -448,7 +414,6 @@ class ConsentimentoService:
 
 
 class RankingService:
-    """Rankings global e regional (RF10, RF11) a partir das views SQL."""
 
     LIMITE_PADRAO = 20
     LIMITE_MAXIMO = 100
@@ -468,7 +433,6 @@ class RankingService:
 
     @staticmethod
     def resumo_usuario(id_usuario):
-        """Posição do usuário nos rankings - usado no card 'Ranking Local'."""
         UsuarioService.buscar(id_usuario)
         return {
             "global": RankingRepository.minha_posicao_global(id_usuario),

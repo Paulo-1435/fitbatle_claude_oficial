@@ -16,7 +16,6 @@ body {
     justify-content: center;
 }
 
-/* Container principal */
 .app-window {
     width: 100%;
     max-width: 1200px;
@@ -27,7 +26,6 @@ body {
     flex-direction: column;
 }
 
-/* Topbar / Cabeçalho */
 header {
     background-color: #181d24;
     min-height: 65px;
@@ -103,7 +101,6 @@ header {
     cursor: pointer;
 }
 
-/* Corpo do perfil */
 .main-content {
     flex: 1;
     padding-right: 350px;
@@ -115,13 +112,11 @@ header {
     padding-right: 0;
 }
 
-/* Banner */
 .profile-banner {
     background: linear-gradient(120deg, #0F3D4C, #0a2a34);
     height: 140px;
 }
 
-/* Detalhes do usuário */
 .user-info-container {
     padding: 0 30px;
     margin-top: -45px;
@@ -225,7 +220,6 @@ header {
     margin-top: 10px;
 }
 
-/* Progresso de nível */
 .level-section {
     padding: 20px 30px;
 }
@@ -278,7 +272,6 @@ header {
     margin-top: 8px;
 }
 
-/* Seção de treinos */
 .activity-section {
     padding: 10px 30px;
 }
@@ -398,7 +391,6 @@ header {
     border-color: #5a2a2c;
 }
 
-/* Barra lateral de configuração */
 .config-sidebar {
     position: absolute;
     top: 65px;
@@ -497,7 +489,6 @@ header {
     color: #f28b8d;
 }
 
-/* Rodapé do menu */
 .menu-footer {
     text-align: center;
 }
@@ -557,7 +548,6 @@ header {
     text-decoration: underline;
 }
 
-/* Modais */
 .overlay {
     position: fixed;
     inset: 0;
@@ -687,7 +677,6 @@ header {
     flex: 1;
 }
 
-/* Dois campos numéricos lado a lado (duração h/min, distância km/m) */
 .campo-duplo {
     display: flex;
     align-items: center;
@@ -730,7 +719,6 @@ header {
     background-color: #3bb6ea;
 }
 
-/* Modal de ranking */
 .ranking-abas {
     display: flex;
     gap: 8px;
@@ -809,7 +797,6 @@ header {
     line-height: 1.5;
 }
 
-/* Lightbox da foto de perfil */
 .foto-viewer {
     position: relative;
     text-align: center;
@@ -848,7 +835,6 @@ header {
     background-color: #3bb6ea;
 }
 
-/* Toast */
 .toast {
     position: fixed;
     bottom: 26px;
@@ -871,7 +857,6 @@ header {
     transform: translateX(-50%) translateY(0);
 }
 
-/* Responsivo */
 @media (max-width: 900px) {
     .main-content,
     .main-content.menu-fechado {

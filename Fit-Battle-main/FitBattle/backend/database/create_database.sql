@@ -1,60 +1,45 @@
--- ============================================================
---  FitBattle - Script de criacao do banco de dados (MySQL 8+)
---  Baseado na modelagem de dados da Secao 5 do relatorio.
---
---  Como usar:
---    mysql -u root -p < create_database.sql
---  ou abra este arquivo no MySQL Workbench e execute tudo.
--- ============================================================
-
 DROP DATABASE IF EXISTS fitbattle;
 CREATE DATABASE fitbattle
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 USE fitbattle;
 
--- ============================================================
---  USUARIO                                     (RF01, RF02, RF03)
--- ============================================================
 CREATE TABLE usuario (
     id_usuario     INT AUTO_INCREMENT PRIMARY KEY,
     nome           VARCHAR(120)  NOT NULL,
     email          VARCHAR(150)  NOT NULL UNIQUE,
-    senha          VARCHAR(255)  NOT NULL,               -- guardar o HASH, nunca a senha pura
+    senha          VARCHAR(255)  NOT NULL,
     idade          TINYINT UNSIGNED,
-    peso           DECIMAL(5,2),                         -- kg
-    altura         DECIMAL(3,2),                         -- metros
+    peso           DECIMAL(5,2),
+    altura         DECIMAL(3,2),
     cidade         VARCHAR(100),
     estado         CHAR(2),
-    foto           VARCHAR(255),                         -- caminho / URL da imagem
-    descricao      VARCHAR(300),                         -- bio do perfil
-    responsavel_nome          VARCHAR(120),              -- adolescente 13-17: responsavel legal (art. 14 LGPD)
+    foto           VARCHAR(255),
+    descricao      VARCHAR(300),
+    responsavel_nome          VARCHAR(120),
     responsavel_email         VARCHAR(150),
-    responsavel_autorizado_em DATETIME,                  -- quando o responsavel autorizou no cadastro
+    responsavel_autorizado_em DATETIME,
     nivel          ENUM('iniciante','intermediario','avancado','profissional','elite')
-                       NOT NULL DEFAULT 'iniciante',     -- RF13 (atribuido automaticamente)
-    xp             INT NOT NULL DEFAULT 0,               -- pontuacao acumulada (RF12/RF13)
-    perfil_publico TINYINT(1) NOT NULL DEFAULT 1,        -- aparece nos rankings publicos
+                       NOT NULL DEFAULT 'iniciante',
+    xp             INT NOT NULL DEFAULT 0,
+    perfil_publico TINYINT(1) NOT NULL DEFAULT 1,
     criado_em      DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     INDEX idx_usuario_cidade (cidade),
     INDEX idx_usuario_estado (estado),
     INDEX idx_usuario_xp (xp)
 ) ENGINE=InnoDB;
 
--- ============================================================
---  ATIVIDADE  - treinos registrados pelo usuario   (RF04, RF05, RF12)
--- ============================================================
 CREATE TABLE atividade (
     id_atividade   INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario     INT NOT NULL,
-    tipo           VARCHAR(60) NOT NULL,                 -- musculacao, cardio, yoga, ...
+    tipo           VARCHAR(60) NOT NULL,
     titulo         VARCHAR(120),
     descricao      VARCHAR(500),
-    tempo_min      INT UNSIGNED,                         -- duracao em minutos
+    tempo_min      INT UNSIGNED,
     distancia_km   DECIMAL(6,2),
     carga_kg       DECIMAL(6,2),
     repeticoes     INT UNSIGNED,
-    pontuacao      INT NOT NULL DEFAULT 0,               -- calculada ao concluir (RF12)
+    pontuacao      INT NOT NULL DEFAULT 0,
     data_registro  DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_atividade_usuario
         FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario)
@@ -62,17 +47,12 @@ CREATE TABLE atividade (
     INDEX idx_atividade_usuario_data (id_usuario, data_registro)
 ) ENGINE=InnoDB;
 
--- ============================================================
---  CONSENTIMENTO  - registro granular de consentimento (LGPD)
---  Termo de Uso, Clausula Sexta / Termo de Consentimento, Clausula Segunda.
---  Uma linha por finalidade de tratamento aceita ou recusada pelo usuario.
--- ============================================================
 CREATE TABLE consentimento (
     id_consentimento INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario       INT NOT NULL,
-    chave            VARCHAR(40)  NOT NULL,               -- identificador da finalidade
-    descricao        VARCHAR(200) NOT NULL,               -- texto exibido ao usuario
-    obrigatorio      TINYINT(1)   NOT NULL DEFAULT 0,     -- 1 = indispensavel a conta
+    chave            VARCHAR(40)  NOT NULL,
+    descricao        VARCHAR(200) NOT NULL,
+    obrigatorio      TINYINT(1)   NOT NULL DEFAULT 0,
     aceito           TINYINT(1)   NOT NULL DEFAULT 1,
     data_registro    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     data_atualizacao DATETIME     NULL,
@@ -81,15 +61,12 @@ CREATE TABLE consentimento (
     UNIQUE KEY uq_consent_usuario_chave (id_usuario, chave)
 ) ENGINE=InnoDB;
 
--- ============================================================
---  GRUPO  - grupos privados de competicao          (RF06)
--- ============================================================
 CREATE TABLE grupo (
     id_grupo       INT AUTO_INCREMENT PRIMARY KEY,
     nome           VARCHAR(120) NOT NULL,
     descricao      VARCHAR(300),
     privacidade    ENUM('publico','privado') NOT NULL DEFAULT 'privado',
-    codigo_convite CHAR(10) UNIQUE,                      -- link de convite (RF07)
+    codigo_convite CHAR(10) UNIQUE,
     id_criador     INT NOT NULL,
     data_criacao   DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_grupo_criador
@@ -97,9 +74,6 @@ CREATE TABLE grupo (
         ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ------------------------------------------------------------
---  GRUPO_MEMBRO - N:M entre usuario e grupo   (RF07, RF09)
--- ------------------------------------------------------------
 CREATE TABLE grupo_membro (
     id_grupo       INT NOT NULL,
     id_usuario     INT NOT NULL,
@@ -112,9 +86,6 @@ CREATE TABLE grupo_membro (
         FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ============================================================
---  CONVITE  - convites para grupos          (RF07, RF08)
--- ============================================================
 CREATE TABLE convite (
     id_convite     INT AUTO_INCREMENT PRIMARY KEY,
     id_grupo       INT NOT NULL,
@@ -132,17 +103,12 @@ CREATE TABLE convite (
     UNIQUE KEY uq_convite (id_grupo, id_destinatario, status)
 ) ENGINE=InnoDB;
 
--- ============================================================
---  RANKING  - posicoes calculadas       (RF09, RF10, RF11)
---  escopo: 'global' | 'regional' | 'grupo'
---  id_grupo so e preenchido quando escopo = 'grupo'
--- ============================================================
 CREATE TABLE ranking (
     id_ranking     INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario     INT NOT NULL,
     escopo         ENUM('global','regional','grupo') NOT NULL,
     id_grupo       INT NULL,
-    referencia     VARCHAR(100),                         -- ex.: cidade/estado quando regional
+    referencia     VARCHAR(100),
     posicao        INT NOT NULL,
     pontuacao      INT NOT NULL DEFAULT 0,
     data_ref       DATE NOT NULL,
@@ -153,9 +119,6 @@ CREATE TABLE ranking (
     INDEX idx_ranking_escopo (escopo, data_ref, posicao)
 ) ENGINE=InnoDB;
 
--- ============================================================
---  META  - metas pessoais de curto/longo prazo   (RF15, RF17)
--- ============================================================
 CREATE TABLE meta (
     id_meta        INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario     INT NOT NULL,
@@ -164,14 +127,11 @@ CREATE TABLE meta (
     data_inicio    DATE NOT NULL,
     data_final     DATE,
     status         ENUM('em_andamento','concluida','expirada') NOT NULL DEFAULT 'em_andamento',
-    progresso      TINYINT UNSIGNED NOT NULL DEFAULT 0,  -- 0 a 100 (%)
+    progresso      TINYINT UNSIGNED NOT NULL DEFAULT 0,
     CONSTRAINT fk_meta_usuario
         FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ============================================================
---  DESAFIO  - desafios sazonais da administracao   (RF16, RF17)
--- ============================================================
 CREATE TABLE desafio (
     id_desafio     INT AUTO_INCREMENT PRIMARY KEY,
     nome           VARCHAR(120) NOT NULL,
@@ -182,9 +142,6 @@ CREATE TABLE desafio (
     recompensa_xp  INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB;
 
--- ------------------------------------------------------------
---  DESAFIO_USUARIO - participacao do usuario no desafio  (RF16, RF17)
--- ------------------------------------------------------------
 CREATE TABLE desafio_usuario (
     id_desafio     INT NOT NULL,
     id_usuario     INT NOT NULL,
@@ -197,13 +154,10 @@ CREATE TABLE desafio_usuario (
         FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
 
--- ============================================================
---  NOTIFICACAO                                    (RF18)
--- ============================================================
 CREATE TABLE notificacao (
     id_notif       INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario     INT NOT NULL,
-    tipo           VARCHAR(60) NOT NULL,                 -- ranking, convite, desafio, ...
+    tipo           VARCHAR(60) NOT NULL,
     mensagem       VARCHAR(300) NOT NULL,
     lida           TINYINT(1) NOT NULL DEFAULT 0,
     data_envio     DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -212,10 +166,6 @@ CREATE TABLE notificacao (
     INDEX idx_notif_usuario_lida (id_usuario, lida)
 ) ENGINE=InnoDB;
 
--- ============================================================
---  COMPARTILHAMENTO  - conquistas em redes sociais   (RF20)
---  Aponta para a atividade OU para a meta que originou o compartilhamento.
--- ============================================================
 CREATE TABLE compartilhamento (
     id_comp        INT AUTO_INCREMENT PRIMARY KEY,
     id_usuario     INT NOT NULL,
@@ -232,12 +182,6 @@ CREATE TABLE compartilhamento (
         FOREIGN KEY (id_meta) REFERENCES meta(id_meta) ON DELETE SET NULL
 ) ENGINE=InnoDB;
 
--- ============================================================
---  VIEWS de apoio aos rankings (RF09, RF10, RF11)
---  Calculam a pontuacao somando as atividades de cada usuario.
--- ============================================================
-
--- Ranking global: todos os usuarios publicos por pontuacao
 CREATE OR REPLACE VIEW vw_ranking_global AS
 SELECT
     u.id_usuario,
@@ -251,7 +195,6 @@ LEFT JOIN atividade a ON a.id_usuario = u.id_usuario
 WHERE u.perfil_publico = 1
 GROUP BY u.id_usuario, u.nome, u.cidade, u.estado;
 
--- Ranking regional: mesma ideia, particionado por cidade
 CREATE OR REPLACE VIEW vw_ranking_regional AS
 SELECT
     u.id_usuario,
@@ -268,7 +211,6 @@ LEFT JOIN atividade a ON a.id_usuario = u.id_usuario
 WHERE u.perfil_publico = 1
 GROUP BY u.id_usuario, u.nome, u.cidade, u.estado;
 
--- Ranking por grupo (RF09)
 CREATE OR REPLACE VIEW vw_ranking_grupo AS
 SELECT
     gm.id_grupo,
@@ -284,10 +226,6 @@ JOIN usuario u   ON u.id_usuario = gm.id_usuario
 LEFT JOIN atividade a ON a.id_usuario = u.id_usuario
 GROUP BY gm.id_grupo, u.id_usuario, u.nome;
 
--- ============================================================
---  DADOS DE EXEMPLO (opcional - remova se nao quiser)
---  As senhas abaixo sao apenas placeholders de hash.
--- ============================================================
 INSERT INTO usuario (nome, email, senha, idade, peso, altura, cidade, estado, descricao, nivel, xp) VALUES
 ('Paulo Souza',  'paulo@fitbattle.com',  'hash_exemplo_1', 28, 78.0, 1.80, 'Belo Horizonte', 'MG', 'Apaixonado por musculacao.', 'profissional', 11101),
 ('Camila Rocha',  'camila@fitbattle.com', 'hash_exemplo_2', 24, 61.5, 1.66, 'Belo Horizonte', 'MG', 'Corredora.', 'elite', 15230),
@@ -298,7 +236,6 @@ INSERT INTO atividade (id_usuario, tipo, titulo, descricao, tempo_min, carga_kg,
 (1, 'cardio',     'Corrida', 'Corrida intensa.',       99, NULL,  NULL, 120),
 (2, 'cardio',     'Corrida longa', '10k no parque.',   58, NULL,  NULL, 150);
 
--- Consentimentos dos usuarios de exemplo (todos aceitos)
 INSERT INTO consentimento (id_usuario, chave, descricao, obrigatorio, aceito)
 SELECT u.id_usuario, c.chave, c.descricao, c.obrigatorio, 1
 FROM usuario u
@@ -327,10 +264,6 @@ INSERT INTO grupo_membro (id_grupo, id_usuario, papel) VALUES
 INSERT INTO desafio (nome, descricao, exercicio, data_inicio, data_fim, recompensa_xp) VALUES
 ('Desafio de Verao', 'Complete 20 treinos no mes', 'livre', '2026-01-01', '2026-01-31', 500);
 
--- ============================================================
---  USUARIO DE APLICACAO
---  A API (backend/app.py) se conecta com este usuario, e nao com o root.
--- ============================================================
 CREATE USER IF NOT EXISTS 'fitbattle'@'localhost' IDENTIFIED BY 'Fitbattle@123';
 GRANT ALL PRIVILEGES ON fitbattle.* TO 'fitbattle'@'localhost';
 FLUSH PRIVILEGES;

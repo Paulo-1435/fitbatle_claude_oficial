@@ -36,7 +36,6 @@
   input,textarea,select{font-family:inherit;}
   .visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
 
-  /* ---------- Header ---------- */
   header.topbar{
     display:flex;align-items:center;gap:20px;
     padding:16px 32px;background:var(--bg);
@@ -70,8 +69,6 @@
     background-size:cover;background-position:center;border:none;cursor:pointer;flex-shrink:0;
   }
 
-  /* ---------- Banner + profile ---------- */
-/* ---------- Banner + Perfil ---------- */
 
 .banner{
     width:100%;
@@ -236,8 +233,6 @@
 
 }
 
-  /* ---------- Level bar ---------- */
-/* ---------- Barra de Nível ---------- */
 
 .level-block{
     margin:36px 0 12px;
@@ -333,7 +328,6 @@
     }
 }
 
-  /* ---------- Feed ---------- */
   .feed{max-width:900px;margin:38px auto 0;padding:0 32px;display:flex;flex-direction:column;gap:22px;}
   .feed-empty{color:var(--text-3);text-align:center;padding:60px 0;font-size:14px;}
   .card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;}
@@ -366,7 +360,6 @@
   .pill-btn.danger{color:#f19a9c;}
   .pill-btn i{font-size:14px;}
 
-  /* ---------- Floating button ---------- */
   .fab{
     position:fixed;right:32px;bottom:32px;width:58px;height:58px;border-radius:50%;
     background:var(--accent);color:#062227;border:none;font-size:28px;font-weight:700;
@@ -375,7 +368,6 @@
   }
   .fab:hover{filter:brightness(1.08);}
 
-  /* ---------- Modals ---------- */
   .overlay{
     position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;
     align-items:center;justify-content:center;z-index:50;padding:20px;
@@ -521,7 +513,6 @@
 
 <button class="fab" id="fabBtn" aria-label="Criar novo treino ou postagem">+</button>
 
-<!-- Modal: escolher tipo -->
 <div class="overlay" id="overlayChoice">
   <div class="modal">
     <button class="modal-close" id="closeChoice" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -533,7 +524,6 @@
   </div>
 </div>
 
-<!-- Modal: novo treino -->
 <div class="overlay" id="overlayTreino">
   <div class="modal">
     <button class="modal-close" id="closeTreino" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -568,7 +558,6 @@
   </div>
 </div>
 
-<!-- Modal: nova postagem -->
 <div class="overlay" id="overlayPost">
   <div class="modal">
     <button class="modal-close" id="closePost" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -587,7 +576,6 @@
   </div>
 </div>
 
-<!-- Modal: editar perfil -->
 <div class="overlay" id="overlayProfile">
   <div class="modal">
     <button class="modal-close" id="closeProfile" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -616,7 +604,6 @@
   </div>
 </div>
 
-<!-- Modal: ranking -->
 <div class="overlay" id="overlayRanking">
   <div class="modal">
     <button class="modal-close" id="closeRanking" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -625,7 +612,6 @@
   </div>
 </div>
 
-<!-- Modal: progresso -->
 <div class="overlay" id="overlayProgress">
   <div class="modal">
     <button class="modal-close" id="closeProgress" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>
@@ -634,7 +620,6 @@
   </div>
 </div>
 
-<!-- Modal: configurações -->
 <div class="overlay" id="overlaySettings">
   <div class="modal">
     <button class="modal-close" id="closeSettings" aria-label="Fechar"><i class="ti ti-x" aria-hidden="true"></i></button>

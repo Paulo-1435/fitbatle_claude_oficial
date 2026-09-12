@@ -1,5 +1,3 @@
-"""Camada Controller - recebe a requisição HTTP e devolve JSON."""
-
 from flask import current_app, jsonify, request
 
 from services.service import (

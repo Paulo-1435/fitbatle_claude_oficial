@@ -1,4 +1,3 @@
-// URL base da API Flask
 const API_URL = 'http://localhost:5000/api';
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -40,10 +39,9 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      // guarda o usuário logado para as outras telas usarem
       try {
         localStorage.setItem('fitbattle_usuario', JSON.stringify(dados.usuario));
-      } catch (e) { /* ignora se o navegador bloquear storage */ }
+      } catch (e) {}
 
       mostrarSucesso(`Bem-vindo, ${dados.usuario.nome}! Redirecionando...`);
       setTimeout(function () { window.location.href = 'perfil.html'; }, 900);
