@@ -2,7 +2,7 @@ import os
 import re
 from urllib.parse import quote_plus
 
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 from werkzeug.exceptions import HTTPException
 
@@ -11,6 +11,7 @@ from database import db
 from routers.routers import Fitbattle_bp
 
 PASTA_UPLOAD = os.path.join(os.path.dirname(__file__), "uploads")
+PASTA_FRONTEND = os.path.join(os.path.dirname(__file__), "..", "frontend")
 
 ORIGENS_PERMITIDAS = [
     re.compile(r"^https?://localhost(:\d+)?$"),
@@ -58,7 +59,7 @@ def criar_app():
     with app.app_context():
         db.create_all()
 
-    @app.get("/")
+    @app.get("/healthz")
     def health():
         return jsonify({"status": "ok", "servico": "FitBattle API"})
 
@@ -66,8 +67,27 @@ def criar_app():
     def servir_upload(nome):
         return send_from_directory(app.config["UPLOAD_FOLDER"], nome)
 
+    servir_frontend = os.path.isdir(PASTA_FRONTEND)
+
+    if servir_frontend:
+        @app.get("/")
+        def servir_raiz():
+            return send_from_directory(PASTA_FRONTEND, "login.html")
+    else:
+        @app.get("/")
+        def servir_raiz():
+            return jsonify({"status": "ok", "servico": "FitBattle API"})
+
     @app.errorhandler(HTTPException)
     def erro_http(erro):
+        if (
+            servir_frontend
+            and erro.code == 404
+            and not request.path.startswith(("/api/", "/uploads/"))
+        ):
+            arquivo = request.path.lstrip("/")
+            if os.path.isfile(os.path.join(PASTA_FRONTEND, arquivo)):
+                return send_from_directory(PASTA_FRONTEND, arquivo)
         return jsonify({"erro": erro.description}), erro.code
 
     @app.errorhandler(Exception)

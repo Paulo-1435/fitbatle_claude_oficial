@@ -7,3 +7,5 @@ venv/
 FitBattle/backend/.secret_key
 FitBattle/backend/uploads/
 FitBattle/backend/dev.db
+FitBattle/backend/instance/
+*.db
