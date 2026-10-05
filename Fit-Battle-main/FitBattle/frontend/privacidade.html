@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FitBattle - Privacidade</title>
+<link rel="stylesheet" href="perfil.css">
+<script src="api.js" defer></script>
+<script src="privacidade.js" defer></script>
+</head>
+
+<body>
+
+<div class="app-window">
+
+    <header>
+        <a class="logo" href="perfil.html">FIT<span>BATTLE</span></a>
+        <div class="header-actions">
+            <a class="privacidade-voltar" href="perfil.html">&larr; Voltar ao perfil</a>
+            <div class="profile-pic-mini" id="avatarMini"></div>
+        </div>
+    </header>
+
+    <main class="main-content" id="mainContent">
+
+        <div class="privacidade-cabecalho">
+            <h1>Privacidade e Consentimentos</h1>
+            <p>
+                Aqui você gerencia as permissões dadas no cadastro, conforme o
+                <a href="termos.html#termo-consentimento">Termo de Consentimento</a> (LGPD).
+                Cada alteração é salva na hora, sem precisar confirmar nada.
+            </p>
+        </div>
+
+        <section class="privacidade-grupo">
+            <h2>Obrigatórios</h2>
+            <p class="privacidade-grupo-nota">
+                Necessários para a conta existir. Não podem ser desligados por aqui.
+            </p>
+            <div id="listaObrigatorios"></div>
+        </section>
+
+        <section class="privacidade-grupo">
+            <h2>Opcionais</h2>
+            <p class="privacidade-grupo-nota">
+                Você pode ligar ou desligar quando quiser, sem perder o uso do app.
+            </p>
+            <div id="listaOpcionais"></div>
+        </section>
+
+        <p class="privacidade-erro" id="erroPrivacidade" role="alert" aria-live="polite"></p>
+
+    </main>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Minhas Metas</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="grupo.css">
+  <link rel="stylesheet" href="metas.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="metas.js" defer></script>
+</head>
+<body data-pagina="metas">
+<main>
+
+  <section class="grupos-cabecalho">
+    <div>
+      <span class="rotulo-mini rotulo-mini--destaque">Desempenho Individual</span>
+      <h1>Minhas Metas</h1>
+      <p>Acompanhe e gerencie seus objetivos pessoais de treino de curto e longo prazo.</p>
+    </div>
+    <button type="button" class="btn btn--primario" id="btnCriarMeta">+ Criar nova meta</button>
+  </section>
+
+  <div class="metas-resumo">
+    <div class="card card--interno metas-resumo__card">
+      <div>
+        <span class="rotulo-mini">Metas Ativas</span>
+        <div class="metas-resumo__valor" id="totalAtivas">—</div>
+        <span class="rotulo-mini" id="detalheAtivas"></span>
+      </div>
+    </div>
+    <div class="card card--interno metas-resumo__card">
+      <div>
+        <span class="rotulo-mini">Metas Concluídas</span>
+        <div class="metas-resumo__valor" id="totalConcluidas">—</div>
+        <span class="rotulo-mini" id="detalheConcluidas"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="abas">
+    <button type="button" class="aba aba--ativa" id="abaEmAndamento">Em andamento <span class="contador-aba" id="contadorEmAndamento"></span></button>
+    <button type="button" class="aba" id="abaConcluidas">Concluídas <span class="contador-aba" id="contadorConcluidasAba"></span></button>
+  </div>
+
+  <div class="metas-grade" id="metasGrade">
+    <p class="estado-vazio">Carregando suas metas...</p>
+  </div>
+
+  <div class="estado-vazio-grupo" id="estadoVazioMetas" hidden>
+    <p class="estado-vazio-grupo__titulo">Você ainda não tem metas ativas</p>
+    <p class="estado-vazio-grupo__texto">Defina metas de carga ou frequência de treinos para acompanhar seu foco e evolução individual.</p>
+    <button type="button" class="btn btn--primario" id="btnCriarPrimeiraMeta">+ Criar minha primeira meta</button>
+  </div>
+
+  <section class="metas-recentes" id="secaoRecentes" hidden>
+    <div class="metas-recentes__cabecalho">
+      <h2>Metas Concluídas Recentemente</h2>
+      <span class="rotulo-mini">Histórico</span>
+    </div>
+    <ul class="metas-recentes__lista" id="listaRecentes"></ul>
+  </section>
+
+</main>
+</body>
+</html>

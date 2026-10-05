@@ -40,8 +40,12 @@ cadastro/login; a busca no topo e o menu (Explorar/Amigos/Grupos) mostram
 "em desenvolvimento"; o "Desafios sazonais" da barra lateral é um aviso fixo.
 
 **Ambiente já configurado nesta máquina:** Python 3.12, dependências instaladas,
-banco `fitbattle` criado no MySQL local, usuário de app `fitbattle` / `Fitbattle@123`.
-Conta de teste: `joaopedro@gmail.com` / `fitbattle2026`.
+banco `fitbattle` criado no MySQL local, usuário de app `fitbattle` / `Fitbattle@123`
+(senha de exemplo para desenvolvimento local — troque-a em qualquer ambiente
+compartilhado ou de produção). Para testar com dados de exemplo, não há mais
+uma conta fixa publicada aqui: rode `backend/tests/servidor_dev.py`, que sobe a
+API num banco SQLite local já populado com usuários e treinos de teste, ou
+cadastre sua própria conta pela tela de cadastro.
 
 ## Estrutura
 
@@ -89,7 +93,9 @@ Ou pelo MySQL Workbench: *File > Open SQL Script* > selecione o arquivo >
 botão do raio (Execute All).
 
 O script cria o banco `fitbattle`, todas as tabelas e o usuário de aplicação
-`fitbattle` / senha `Fitbattle@123` (usado pela API, não pelo root).
+`fitbattle` / senha `Fitbattle@123` (usado pela API, não pelo root). Essa senha
+é só um exemplo para desenvolvimento local; troque-a (e configure `DB_PASSWORD`
+com o novo valor) em qualquer ambiente compartilhado ou de produção.
 
 ### 2. Backend
 
@@ -108,7 +114,10 @@ o sistema — se fechar (ou o PC reiniciar), rode `python app.py` de novo.
 
 Variáveis de ambiente aceitas (todas opcionais, já vêm com padrão):
 `DB_USER` (fitbattle), `DB_PASSWORD` (Fitbattle@123), `DB_HOST` (localhost),
-`DB_PORT` (3306), `DB_NAME` (fitbattle), `SECRET_KEY`.
+`DB_PORT` (3306), `DB_NAME` (fitbattle), `SECRET_KEY`, `FLASK_DEBUG` (desligado
+por padrão; defina como `1` só em desenvolvimento), `CORS_EXTRA_ORIGENS`
+(origens extras separadas por vírgula, além de localhost/127.0.0.1/IPs de rede
+local, já liberados por padrão).
 
 ### 3. Frontend
 

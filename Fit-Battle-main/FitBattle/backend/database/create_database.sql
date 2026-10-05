@@ -160,10 +160,14 @@ CREATE TABLE meta (
     id_usuario     INT NOT NULL,
     descricao      VARCHAR(300) NOT NULL,
     tipo           ENUM('curto_prazo','longo_prazo') NOT NULL DEFAULT 'curto_prazo',
+    tipo_metrica   ENUM('carga_maxima','frequencia') NOT NULL,
+    exercicio      VARCHAR(120),
+    valor_objetivo DECIMAL(8,2) NOT NULL,
+    valor_partida  DECIMAL(8,2),
     data_inicio    DATE NOT NULL,
     data_final     DATE,
     status         ENUM('em_andamento','concluida','expirada') NOT NULL DEFAULT 'em_andamento',
-    progresso      TINYINT UNSIGNED NOT NULL DEFAULT 0,
+    concluida_em   DATETIME,
     CONSTRAINT fk_meta_usuario
         FOREIGN KEY (id_usuario) REFERENCES usuario(id_usuario) ON DELETE CASCADE
 ) ENGINE=InnoDB;
@@ -246,6 +250,26 @@ FROM usuario u
 LEFT JOIN atividade a ON a.id_usuario = u.id_usuario
 WHERE u.perfil_publico = 1
 GROUP BY u.id_usuario, u.nome, u.cidade, u.estado;
+
+CREATE OR REPLACE VIEW vw_ranking_exercicio AS
+SELECT
+    u.id_usuario,
+    u.nome,
+    u.cidade,
+    u.estado,
+    MIN(a.titulo) AS titulo,
+    LOWER(a.titulo) AS titulo_normalizado,
+    MAX(a.carga_kg) AS carga_maxima,
+    RANK() OVER (
+        PARTITION BY LOWER(a.titulo)
+        ORDER BY MAX(a.carga_kg) DESC
+    ) AS posicao
+FROM usuario u
+JOIN atividade a ON a.id_usuario = u.id_usuario
+WHERE u.perfil_publico = 1
+    AND a.tipo = 'musculacao'
+    AND a.carga_kg IS NOT NULL
+GROUP BY u.id_usuario, u.nome, u.cidade, u.estado, LOWER(a.titulo);
 
 CREATE OR REPLACE VIEW vw_ranking_grupo AS
 SELECT

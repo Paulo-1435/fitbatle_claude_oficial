@@ -3,114 +3,156 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>FitBattle - Registre-se</title>
-  <link rel="stylesheet" href="style.css">
+  <title>FitBattle - Criar conta</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="auth.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="auth-comum.js" defer></script>
   <script src="script.js" defer></script>
 </head>
-<body>
+<body class="auth-pagina">
 
-  <div class="card">
+  <header class="auth-topo-minimo">
+    <a class="auth-marca" href="login.html" aria-label="FitBattle">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+      <span>Fit<span class="auth-marca__battle">Battle</span></span>
+    </a>
+  </header>
 
-    <div class="left-panel">
-      <h1 class="title">REGISTRE-SE</h1>
-      <p class="subtitle">Crie sua conta e entre na competição</p>
+  <main class="auth-conteudo" id="conteudo">
+    <section class="painel-form" aria-labelledby="titulo-form">
+      <h1 class="painel-form__titulo" id="titulo-form">Criar Conta</h1>
+      <p class="painel-form__subtitulo">Preencha os dados abaixo para criar sua conta no FitBattle.</p>
 
-      <form id="registerForm" class="register-form" novalidate>
-
-        <div class="field">
-          <label for="usuario">Usuário:</label>
-          <input type="text" id="usuario" name="usuario" placeholder="Seu nome" required>
-        </div>
-
-        <div class="field">
-          <label for="email">Email:</label>
-          <input type="email" id="email" name="email" placeholder="seu@email.com" required>
-        </div>
-
-        <div class="field">
-          <label for="idade">Idade:</label>
-          <input type="number" id="idade" name="idade" placeholder="Sua idade" min="1" max="120" required>
-        </div>
-
-        <div id="responsavelBox" hidden>
-          <p class="responsavel-aviso">
-            Menor de 18 anos: o cadastro precisa da autorização do seu responsável legal (art. 14 da LGPD).
-          </p>
-          <div class="field">
-            <label for="responsavelNome">Nome do responsável legal:</label>
-            <input type="text" id="responsavelNome" name="responsavelNome" placeholder="Nome completo do responsável">
+      <form class="form" id="registerForm" novalidate>
+        <div class="campo">
+          <label class="campo__rotulo" for="usuario">Nome Completo</label>
+          <div class="campo-icone">
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="12" r="2"/><path d="M14 10h4M14 14h4"/></svg>
+            <input class="input" type="text" id="usuario" name="usuario" placeholder="Digite seu nome completo" autocomplete="name" required>
           </div>
-          <div class="field">
-            <label for="responsavelEmail">E-mail do responsável legal:</label>
-            <input type="email" id="responsavelEmail" name="responsavelEmail" placeholder="email@responsavel.com">
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="handle">Nome de Usuário (@handle)</label>
+          <div class="campo-icone">
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M16 8v5a3 3 0 0 0 6 0v-1a10 10 0 1 0-4 8"/></svg>
+            <input class="input" type="text" id="handle" name="handle" placeholder="Escolha seu @usuario" disabled aria-describedby="dica-handle">
           </div>
-          <label class="consent-accept">
+          <span class="campo__auxiliar campo__auxiliar--mudo" id="dica-handle">Em breve — identificação pública visível nas tabelas de ranking.</span>
+        </div>
+
+        <div class="form__linha form__linha--email">
+          <div class="campo">
+            <label class="campo__rotulo" for="email">E-mail</label>
+            <div class="campo-icone">
+              <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg>
+              <input class="input" type="email" id="email" name="email" placeholder="seu.email@exemplo.com" autocomplete="email" autocapitalize="none" spellcheck="false" required>
+            </div>
+          </div>
+          <div class="campo">
+            <label class="campo__rotulo" for="idade">Idade</label>
+            <div class="campo-icone">
+              <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+              <input class="input" type="number" id="idade" name="idade" placeholder="Sua idade" min="1" max="120" inputmode="numeric" required>
+            </div>
+          </div>
+        </div>
+
+        <div class="bloco-responsavel" id="responsavelBox" hidden>
+          <p class="aviso-responsavel">Menor de 18 anos: o cadastro precisa da autorização do seu responsável legal (art. 14 da LGPD).</p>
+          <div class="form__linha">
+            <div class="campo">
+              <label class="campo__rotulo" for="responsavelNome">Nome do responsável legal</label>
+              <input class="input" type="text" id="responsavelNome" name="responsavelNome" placeholder="Nome completo do responsável" autocomplete="off">
+            </div>
+            <div class="campo">
+              <label class="campo__rotulo" for="responsavelEmail">E-mail do responsável legal</label>
+              <input class="input" type="email" id="responsavelEmail" name="responsavelEmail" placeholder="email@responsavel.com" autocomplete="off">
+            </div>
+          </div>
+          <label class="check">
             <input type="checkbox" id="autorizacaoResponsavel">
             <span>Sou o responsável legal por este(a) adolescente e autorizo a criação e a manutenção da conta, incluindo a participação nos rankings e na busca de perfis.</span>
           </label>
         </div>
 
-        <div class="field">
-          <label for="senha">Senha:</label>
-          <input type="password" id="senha" name="senha" placeholder="Mínimo 8 caracteres" minlength="8" required>
+        <div class="campo">
+          <div class="campo__topo">
+            <label class="campo__rotulo" for="senha">Senha de Acesso</label>
+            <span class="campo__auxiliar campo__auxiliar--mudo">Mínimo de 8 caracteres</span>
+          </div>
+          <div class="campo-icone campo-icone--olho">
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            <input class="input" type="password" id="senha" name="senha" placeholder="Mínimo de 8 caracteres" minlength="8" autocomplete="new-password" required>
+            <button type="button" class="botao-olho" data-alternar-senha="senha" aria-label="Mostrar senha" aria-pressed="false">
+              <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/><path class="icone__risco" d="M3 3l18 18"/></svg>
+            </button>
+          </div>
+          <span class="rotulo-mini">Use 8 ou mais caracteres.</span>
         </div>
 
-        <div class="field">
-          <label for="confirmaSenha">Confirme a senha:</label>
-          <input type="password" id="confirmaSenha" name="confirmaSenha" placeholder="Repita a senha" minlength="8" required>
+        <div class="campo">
+          <div class="campo__topo">
+            <label class="campo__rotulo" for="academia">Sua Academia / Unidade</label>
+            <span class="badge badge--placeholder">Em breve</span>
+          </div>
+          <div class="campo-icone">
+            <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <input class="input" type="text" id="academia" name="academia" placeholder="Aguardando liberação de unidades parceiras" disabled>
+          </div>
         </div>
 
-        <span class="error-message" id="errorMessage"></span>
+        <label class="check">
+          <input type="checkbox" id="aceitePagina" name="aceitePagina">
+          <span>Li e concordo com os <a href="#" data-abrir-termo="termo-uso">Termos de Uso</a> e a <a href="#" data-abrir-termo="termo-consentimento">Política de Privacidade (LGPD)</a></span>
+        </label>
 
-        <button type="submit" class="btn-cadastrar">CADASTRE-SE</button>
+        <p class="mensagem-form" id="errorMessage" role="alert" aria-live="polite"></p>
+
+        <button type="submit" class="btn btn--primario btn--grande btn--bloco" id="btnCadastrar">
+          <span>Criar conta</span>
+        </button>
       </form>
 
-      <div class="login-section">
-        <p class="login-text">ja tem uma conta? <a href="login.html" class="login-link">Faça login</a></p>
-        <p class="terms-text">
-          Ao se cadastrar, você concorda com o
-          <a href="#" class="terms-link" data-abrir-termo="termo-uso">Termo de Uso</a> e o
-          <a href="#" class="terms-link" data-abrir-termo="termo-consentimento">Termo de Consentimento</a> do FitBattle.
-        </p>
-      </div>
-    </div>
-
-    <div class="right-panel">
-      <div class="logo">
-        <svg class="logo-icon" viewBox="0 0 120 110" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 10 L10 100 L28 100 L28 65 L55 65 L55 50 L28 50 L28 25 L62 25 L62 10 Z" fill="#ffffff"/>
-          <path d="M95 5 L55 55 L78 55 L45 105 L110 45 L85 45 Z" fill="#1ec8ff"/>
-        </svg>
-        <div class="logo-text">
-          <span class="logo-fit">Fit</span><span class="logo-battle">Battle</span>
+      <div class="form form--separado">
+        <div class="divisor-texto">Ou conecte rapidamente com</div>
+        <div class="botoes-sociais">
+          <button type="button" class="btn btn--secundario botao-social" data-em-breve="Cadastro com Google Fit">
+            Google Fit <span class="badge badge--placeholder">Em breve</span>
+          </button>
+          <button type="button" class="btn btn--secundario botao-social" data-em-breve="Cadastro com Apple Health">
+            Apple Health <span class="badge badge--placeholder">Em breve</span>
+          </button>
         </div>
+        <p class="troca-form">Já tem uma conta de atleta? <a href="login.html">Entrar</a></p>
       </div>
-      <p class="tagline">Treine. Compita. Evolua.</p>
+    </section>
+  </main>
 
-      <div class="social-section">
-        <a href="https://www.instagram.com/" target="_blank" rel="noopener" class="social-icon" aria-label="Instagram do FitBattle">
-          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect x="2.5" y="2.5" width="19" height="19" rx="5.5" fill="none" stroke="#ffffff" stroke-width="2"/>
-            <circle cx="12" cy="12" r="4.6" fill="none" stroke="#ffffff" stroke-width="2"/>
-            <circle cx="17.4" cy="6.6" r="1.5" fill="#ffffff"/>
-          </svg>
-        </a>
-        <span class="social-text">Siga-nos no Instagram</span>
-      </div>
+  <footer class="auth-rodape">
+    <div class="auth-rodape__interno">
+      <span>© 2026 FitBattle</span>
+      <nav class="auth-rodape__links" aria-label="Links do rodapé">
+        <a href="termos.html#termo-uso">Termos de Uso</a>
+        <a href="termos.html#termo-consentimento">Privacidade &amp; LGPD</a>
+      </nav>
     </div>
-
-  </div>
+  </footer>
 
   <div class="overlay" id="overlayTermo">
-    <div class="modal-termo">
+    <div class="modal-termo" role="dialog" aria-modal="true" aria-labelledby="tituloModalConsent">
       <button type="button" class="modal-close" id="closeTermo" aria-label="Fechar">&times;</button>
 
       <div id="painelConsentimento">
-        <h2 class="modal-title">Termo de Uso e Consentimento (LGPD)</h2>
+        <h2 class="modal-title" id="tituloModalConsent">Termo de Uso e Consentimento (LGPD)</h2>
         <p class="consent-intro">
           As permissões abaixo já vêm marcadas. <strong>Desmarque</strong> o que você
           não autoriza — você pode mudar isso depois nas configurações.
-          <a href="#" class="terms-link" id="linkLerTermoCompleto">Ler o termo completo</a>
+          <a href="#" id="linkLerTermoCompleto">Ler o termo completo</a>
         </p>
 
         <div class="consent-scroll">
@@ -123,6 +165,10 @@
           <label class="consent-item is-locked">
             <input type="checkbox" checked disabled>
             <span>Registrar e guardar meus treinos e histórico</span>
+          </label>
+          <label class="consent-item is-locked">
+            <input type="checkbox" checked disabled>
+            <span>Manter meu histórico e minhas estatísticas individuais</span>
           </label>
           <label class="consent-item is-locked">
             <input type="checkbox" checked disabled>
@@ -170,11 +216,11 @@
           <span>Li e aceito o Termo de Uso e o Termo de Consentimento.</span>
         </label>
 
-        <span class="error-message" id="erroModalTermo"></span>
+        <p class="mensagem-form" id="erroModalTermo" role="alert" aria-live="polite"></p>
 
         <div class="modal-actions">
-          <button type="button" class="btn-secundario" id="btnCancelarTermo">Cancelar</button>
-          <button type="button" class="btn-cadastrar" id="btnConfirmarCadastro">Confirmar cadastro</button>
+          <button type="button" class="btn btn--secundario" id="btnCancelarTermo">Cancelar</button>
+          <button type="button" class="btn btn--primario" id="btnConfirmarCadastro">Confirmar cadastro</button>
         </div>
       </div>
 

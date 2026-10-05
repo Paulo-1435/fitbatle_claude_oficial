@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Criar Grupo</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="grupo.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="grupo-criar.js" defer></script>
+</head>
+<body data-pagina="grupo">
+<main>
+
+  <a class="link-voltar" href="grupo.html">&larr; Voltar para Meus Grupos</a>
+
+  <section class="grupos-cabecalho grupos-cabecalho--form">
+    <span class="rotulo-mini rotulo-mini--destaque">Comunidade &amp; Competição</span>
+    <h1>Criar Novo Grupo Privado</h1>
+    <p>Crie um grupo exclusivo para você e seus colegas acompanharem rankings internos.</p>
+  </section>
+
+  <form class="card card--interno form-grupo" id="formCriarGrupo" novalidate>
+    <div class="campo">
+      <div class="campo__topo">
+        <label class="campo__rotulo" for="nomeGrupo">Nome do grupo *</label>
+        <span class="campo__auxiliar campo__auxiliar--mudo"><span id="contadorNome">0</span> / 50</span>
+      </div>
+      <input class="input" type="text" id="nomeGrupo" name="nome" maxlength="50" placeholder="Ex: Treino das 7h, Equipe Supino, etc." required>
+      <span class="rotulo-mini">O nome que identifica o grupo nas listagens e rankings.</span>
+    </div>
+
+    <div class="campo">
+      <div class="campo__topo">
+        <label class="campo__rotulo" for="descricaoGrupo">Descrição do grupo (opcional)</label>
+        <span class="campo__auxiliar campo__auxiliar--mudo"><span id="contadorDescricao">0</span> / 300</span>
+      </div>
+      <textarea class="input" id="descricaoGrupo" name="descricao" maxlength="300" placeholder="Descreva os objetivos, regras de frequência ou foco dos treinos..."></textarea>
+      <span class="rotulo-mini">Visível para os membros participantes.</span>
+    </div>
+
+    <div class="aviso-caixa">
+      <strong>Privacidade e Moderação</strong>
+      <p>O grupo é privado: novos membros entram só por convite direto ou pelo link de acesso exclusivo gerado após a criação.</p>
+    </div>
+
+    <p class="mensagem-form" id="erroCriarGrupo" role="alert" aria-live="polite"></p>
+
+    <div class="form-grupo__acoes">
+      <a class="btn btn--secundario" href="grupo.html">Cancelar</a>
+      <button type="submit" class="btn btn--primario" id="btnSalvarGrupo">+ Salvar e Criar Grupo</button>
+    </div>
+  </form>
+
+</main>
+</body>
+</html>

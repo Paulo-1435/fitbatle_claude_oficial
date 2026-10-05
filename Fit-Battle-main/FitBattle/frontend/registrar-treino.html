@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Registrar Treino</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="registrar-treino.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="registrar-treino.js" defer></script>
+</head>
+<body data-pagina="registrar">
+<main>
+
+  <div class="rt-cabecalho">
+    <div>
+      <span class="badge badge--destaque">Protocolo de carga</span>
+      <h1>Registrar Novo Treino 🏆</h1>
+      <p>Lance seu peso e repetições e compartilhe sua evolução. Esta tela registra treinos de musculação; para cardio, yoga ou outros tipos, use o botão rápido do feed.</p>
+    </div>
+    <div class="rt-recompensa">
+      <span class="rt-recompensa__rotulo">Recompensa estimada</span>
+      <span class="rt-recompensa__valor" id="recompensaEstimada">≈ +20 xp</span>
+    </div>
+  </div>
+
+  <div class="rt-passos" role="tablist" aria-label="Passos do cadastro de treino">
+    <div class="rt-passo rt-passo--ativo" id="indicadorPasso1" role="tab">
+      <span class="rt-passo__num">1</span>
+      <span class="rt-passo__titulo">Exercício</span>
+    </div>
+    <div class="rt-passo" id="indicadorPasso2" role="tab">
+      <span class="rt-passo__num">2</span>
+      <span class="rt-passo__titulo">Carga</span>
+    </div>
+    <div class="rt-passo" id="indicadorPasso3" role="tab">
+      <span class="rt-passo__num">3</span>
+      <span class="rt-passo__titulo">Comprovação e revisão</span>
+    </div>
+  </div>
+
+  <div class="rt-layout">
+    <form class="rt-conteudo" id="formRegistrarTreino" novalidate>
+
+      <section class="card card--interno rt-etapa rt-etapa--visivel" id="etapa1" aria-labelledby="tituloEtapa1">
+        <h2 class="rt-etapa__titulo" id="tituloEtapa1">Qual exercício você treinou? <span class="rt-obrigatorio" title="Obrigatório">*</span></h2>
+        <div class="rt-exercicios" id="listaExercicios">
+          <button type="button" class="rt-exercicio" data-exercicio="Supino Reto">
+            <svg class="rt-exercicio__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12h4M18 12h4M6 12h12M5 8v8M19 8v8"/></svg>
+            <span class="rt-exercicio__nome">Supino Reto</span>
+          </button>
+          <button type="button" class="rt-exercicio" data-exercicio="Levantamento Terra">
+            <svg class="rt-exercicio__icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="6" r="2"/><path d="M12 8v8M8 20h8M9 12h6"/></svg>
+            <span class="rt-exercicio__nome">Levantamento Terra</span>
+          </button>
+          <button type="button" class="rt-exercicio" data-exercicio="Agachamento Livre">
+            <svg class="rt-exercicio__icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="4" r="2"/><path d="M12 6v6l-3 8M12 12l3 8M9 12H2M15 12h7"/></svg>
+            <span class="rt-exercicio__nome">Agachamento Livre</span>
+          </button>
+          <button type="button" class="rt-exercicio" data-exercicio="Leg Press">
+            <svg class="rt-exercicio__icone" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="10" width="6" height="4"/><path d="M9 12h12M17 8v8"/></svg>
+            <span class="rt-exercicio__nome">Leg Press</span>
+          </button>
+          <button type="button" class="rt-exercicio" data-exercicio="Barra Fixa">
+            <svg class="rt-exercicio__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18M7 5v6l-2 8M17 5v6l2 8M9 19h6"/></svg>
+            <span class="rt-exercicio__nome">Barra Fixa</span>
+          </button>
+          <button type="button" class="rt-exercicio" data-exercicio="">
+            <svg class="rt-exercicio__icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="rt-exercicio__nome">Outro...</span>
+          </button>
+        </div>
+        <div class="campo rt-outro" id="campoOutroExercicio" hidden>
+          <label class="campo__rotulo" for="exercicioCustom">Nome do exercício</label>
+          <input class="input" type="text" id="exercicioCustom" placeholder="Ex: Crucifixo, Remada Curvada" maxlength="120">
+        </div>
+        <p class="mensagem-form" id="erroEtapa1" role="alert" aria-live="polite"></p>
+      </section>
+
+      <section class="card card--interno rt-etapa" id="etapa2" aria-labelledby="tituloEtapa2">
+        <h2 class="rt-etapa__titulo" id="tituloEtapa2">Quanto peso você levantou?</h2>
+
+        <div class="rt-peso">
+          <span class="rt-peso__rotulo">Carga total (barra + anilhas)</span>
+          <span class="rt-peso__valor"><span id="pesoValor">40</span><small>kg</small></span>
+          <div class="rt-ajustes">
+            <button type="button" class="rt-ajuste rt-ajuste--negativo" data-ajuste="-10">-10kg</button>
+            <button type="button" class="rt-ajuste rt-ajuste--negativo" data-ajuste="-5">-5kg</button>
+            <button type="button" class="rt-ajuste rt-ajuste--negativo" data-ajuste="-1">-1kg</button>
+            <button type="button" class="rt-ajuste" data-ajuste="1">+1kg</button>
+            <button type="button" class="rt-ajuste" data-ajuste="5">+5kg</button>
+            <button type="button" class="rt-ajuste" data-ajuste="10">+10kg</button>
+          </div>
+        </div>
+
+        <div class="rt-contadores">
+          <div class="rt-contador">
+            <span class="campo__rotulo">Séries / repetições</span>
+            <div class="rt-contador__linha">
+              <button type="button" class="rt-contador__botao" data-contador="repeticoes" data-delta="-1" aria-label="Diminuir repetições">−</button>
+              <span class="rt-contador__numero" id="repeticoesValor">6</span>
+              <button type="button" class="rt-contador__botao" data-contador="repeticoes" data-delta="1" aria-label="Aumentar repetições">+</button>
+            </div>
+          </div>
+          <div class="rt-contador">
+            <span class="campo__rotulo">Duração do treino (min)</span>
+            <div class="rt-contador__linha">
+              <button type="button" class="rt-contador__botao" data-contador="duracao" data-delta="-5" aria-label="Diminuir duração">−</button>
+              <span class="rt-contador__numero" id="duracaoValor">40</span>
+              <button type="button" class="rt-contador__botao" data-contador="duracao" data-delta="5" aria-label="Aumentar duração">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="rt-recorde" id="painelRecorde">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="6"/><path d="M9 14 6 22l6-3 6 3-3-8"/></svg>
+          <span id="textoRecorde">Selecione um exercício para ver seu recorde pessoal.</span>
+        </div>
+
+        <div class="campo">
+          <label class="campo__rotulo" for="treinoDescricao">Descrição (opcional)</label>
+          <textarea class="input" id="treinoDescricao" placeholder="Como foi o treino?" maxlength="500"></textarea>
+        </div>
+
+        <p class="mensagem-form" id="erroEtapa2" role="alert" aria-live="polite"></p>
+      </section>
+
+      <section class="card card--interno rt-etapa" id="etapa3" aria-labelledby="tituloEtapa3">
+        <h2 class="rt-etapa__titulo" id="tituloEtapa3">Vídeo ou foto de comprovação <span class="badge badge--placeholder">Em breve</span></h2>
+        <div class="rt-upload" data-em-breve="Envio de vídeo ou foto de comprovação">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 16V4M6 10l6-6 6 6"/><path d="M4 20h16"/></svg>
+          <span>Arraste um vídeo ou foto, ou clique para selecionar</span>
+          <span class="rt-upload__aviso">Formatos aceitos no futuro: MP4, MOV, JPG, PNG</span>
+        </div>
+
+        <h2 class="rt-etapa__titulo">Revisão</h2>
+        <div class="rt-resumo">
+          <dl>
+            <dt>Exercício</dt>
+            <dd id="resumoExercicio">—</dd>
+            <dt>Carga</dt>
+            <dd id="resumoCarga">—</dd>
+            <dt>Séries / repetições</dt>
+            <dd id="resumoReps">—</dd>
+            <dt>Duração</dt>
+            <dd id="resumoDuracao">—</dd>
+          </dl>
+        </div>
+
+        <p class="mensagem-form" id="erroEtapa3" role="alert" aria-live="polite"></p>
+      </section>
+
+      <div class="rt-navegacao">
+        <button type="button" class="btn btn--secundario" id="btnVoltar" hidden>Voltar</button>
+        <button type="button" class="btn btn--primario" id="btnProximo">Próximo</button>
+        <button type="submit" class="btn btn--primario" id="btnSalvar" hidden>
+          <span id="textoBotaoSalvar">Salvar e Compartilhar Treino</span>
+        </button>
+      </div>
+    </form>
+
+    <aside class="rt-lateral">
+      <div class="card card--interno">
+        <span class="rt-lateral__titulo">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18M7 14l4-4 3 3 5-6"/></svg>
+          Sua métrica neste exercício
+        </span>
+        <div class="rt-metrica-linha">
+          <span>Seu recorde atual</span>
+          <span class="rt-metrica-linha__valor" id="lateralRecordeAtual">—</span>
+        </div>
+        <div class="rt-metrica-linha">
+          <span>Carga desta vez</span>
+          <span class="rt-metrica-linha__valor" id="lateralCargaAtual">—</span>
+        </div>
+      </div>
+
+      <div class="card card--interno">
+        <span class="rt-lateral__titulo">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          Instrutor validador
+        </span>
+        <div class="rt-placeholder-card">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>A validação por instrutores da academia ainda está em desenvolvimento.</span>
+        </div>
+      </div>
+
+      <div class="card card--interno">
+        <span class="rt-lateral__titulo">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 4 7v10l8 5 8-5V7z"/></svg>
+          Desafio semanal
+        </span>
+        <div class="rt-placeholder-card">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" style="width:20px;height:20px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+          <span>Os desafios semanais ainda estão em desenvolvimento.</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+</main>
+</body>
+</html>

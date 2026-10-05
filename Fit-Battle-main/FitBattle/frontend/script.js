@@ -1,209 +1,201 @@
-const API_URL = 'http://localhost:5000/api';
+const PADRAO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const IDADE_MINIMA = 13;
+const IDADE_MAIORIDADE = 18;
+const ATRASO_REDIRECIONAR_MS = 1500;
 
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('registerForm');
-  const usuario = document.getElementById('usuario');
+  const nome = document.getElementById('usuario');
   const email = document.getElementById('email');
   const idade = document.getElementById('idade');
   const senha = document.getElementById('senha');
-  const confirmaSenha = document.getElementById('confirmaSenha');
-  const aceiteTermos = document.getElementById('aceiteTermos');
-  const errorMessage = document.getElementById('errorMessage');
+  const aceitePagina = document.getElementById('aceitePagina');
+  const mensagem = document.getElementById('errorMessage');
+  const botaoCadastrar = document.getElementById('btnCadastrar');
 
   const responsavelBox = document.getElementById('responsavelBox');
   const responsavelNome = document.getElementById('responsavelNome');
   const responsavelEmail = document.getElementById('responsavelEmail');
   const autorizacaoResponsavel = document.getElementById('autorizacaoResponsavel');
 
-  const overlayTermo = document.getElementById('overlayTermo');
+  const overlay = document.getElementById('overlayTermo');
   const painelConsentimento = document.getElementById('painelConsentimento');
   const painelLeitura = document.getElementById('painelLeitura');
-  const closeTermo = document.getElementById('closeTermo');
-  const linkLerTermoCompleto = document.getElementById('linkLerTermoCompleto');
-  const btnVoltarConsentimento = document.getElementById('btnVoltarConsentimento');
-  const btnCancelarTermo = document.getElementById('btnCancelarTermo');
-  const btnConfirmarCadastro = document.getElementById('btnConfirmarCadastro');
-  const erroModalTermo = document.getElementById('erroModalTermo');
   const iframeTermo = document.getElementById('iframeTermo');
+  const btnVoltar = document.getElementById('btnVoltarConsentimento');
+  const btnConfirmar = document.getElementById('btnConfirmarCadastro');
+  const aceiteTermos = document.getElementById('aceiteTermos');
+  const erroModal = document.getElementById('erroModalTermo');
 
-  let dadosCadastroPendente = null;
+  let dadosPendentes = null;
+
+  limparErroAoEditar(form, mensagem);
+
+  function erro(texto, campo) {
+    mostrarMensagemForm(mensagem, texto, false);
+    if (campo) campo.focus();
+  }
 
   function atualizarResponsavel() {
-    const n = Number(idade.value);
-    const menor = idade.value !== '' && n >= 13 && n < 18;
+    const valor = Number(idade.value);
+    const menor = idade.value !== '' && valor >= IDADE_MINIMA && valor < IDADE_MAIORIDADE;
     responsavelBox.hidden = !menor;
   }
   idade.addEventListener('input', atualizarResponsavel);
   atualizarResponsavel();
 
-  function abrirModalConsentimento() {
-    painelLeitura.hidden = true;
-    painelConsentimento.hidden = false;
-    erroModalTermo.textContent = '';
-    overlayTermo.classList.add('aberto');
+  function abrirModal() {
+    overlay.classList.add('aberto');
   }
 
-  function abrirModalLeitura(ancora, vindoDoConsentimento) {
+  function abrirConsentimento() {
+    painelLeitura.hidden = true;
+    painelConsentimento.hidden = false;
+    erroModal.textContent = '';
+    abrirModal();
+    document.getElementById('closeTermo').focus();
+  }
+
+  function abrirLeitura(ancora, vindoDoConsentimento) {
     iframeTermo.src = 'termos.html#' + ancora;
     painelConsentimento.hidden = true;
     painelLeitura.hidden = false;
-    btnVoltarConsentimento.hidden = !vindoDoConsentimento;
-    overlayTermo.classList.add('aberto');
+    btnVoltar.hidden = !vindoDoConsentimento;
+    abrirModal();
+    document.getElementById('closeTermo').focus();
   }
 
-  function fecharModalTermo() {
-    overlayTermo.classList.remove('aberto');
-    dadosCadastroPendente = null;
+  function fecharModal() {
+    overlay.classList.remove('aberto');
+    dadosPendentes = null;
   }
 
   document.querySelectorAll('[data-abrir-termo]').forEach(function (link) {
-    link.addEventListener('click', function (event) {
-      event.preventDefault();
-      abrirModalLeitura(link.getAttribute('data-abrir-termo'), false);
+    link.addEventListener('click', function (evento) {
+      evento.preventDefault();
+      abrirLeitura(link.getAttribute('data-abrir-termo'), false);
     });
   });
 
-  linkLerTermoCompleto.addEventListener('click', function (event) {
-    event.preventDefault();
-    abrirModalLeitura('termo-uso', true);
+  document.getElementById('linkLerTermoCompleto').addEventListener('click', function (evento) {
+    evento.preventDefault();
+    abrirLeitura('termo-uso', true);
   });
 
-  btnVoltarConsentimento.addEventListener('click', function () {
+  btnVoltar.addEventListener('click', function () {
     painelLeitura.hidden = true;
     painelConsentimento.hidden = false;
   });
 
-  closeTermo.addEventListener('click', fecharModalTermo);
-  btnCancelarTermo.addEventListener('click', fecharModalTermo);
-
-  overlayTermo.addEventListener('click', function (event) {
-    if (event.target === overlayTermo) fecharModalTermo();
+  document.getElementById('closeTermo').addEventListener('click', fecharModal);
+  document.getElementById('btnCancelarTermo').addEventListener('click', fecharModal);
+  overlay.addEventListener('click', function (evento) {
+    if (evento.target === overlay) fecharModal();
+  });
+  document.addEventListener('keydown', function (evento) {
+    if (evento.key === 'Escape' && overlay.classList.contains('aberto')) fecharModal();
   });
 
-  form.addEventListener('submit', function (event) {
-    event.preventDefault();
-    limparMensagem();
+  form.addEventListener('submit', function (evento) {
+    evento.preventDefault();
+    mostrarMensagemForm(mensagem, '', false);
 
-    if (usuario.value.trim().length < 3) {
-      return mostrarErro('Informe um nome com pelo menos 3 caracteres.', usuario);
+    if (nome.value.trim().length < 3) {
+      return erro('Informe um nome com pelo menos 3 caracteres.', nome);
     }
-
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email.value.trim())) {
-      return mostrarErro('Por favor, informe um email válido.', email);
+    if (!PADRAO_EMAIL.test(email.value.trim())) {
+      return erro('Por favor, informe um e-mail válido.', email);
     }
 
     const idadeNum = Number(idade.value);
     if (!idade.value || idadeNum < 1 || idadeNum > 120) {
-      return mostrarErro('Informe uma idade válida (1 a 120).', idade);
+      return erro('Informe uma idade válida (1 a 120).', idade);
     }
-
-    if (idadeNum < 13) {
-      return mostrarErro('O cadastro não é permitido para menores de 13 anos (art. 14 da LGPD).', idade);
+    if (idadeNum < IDADE_MINIMA) {
+      return erro('O cadastro não é permitido para menores de 13 anos (art. 14 da LGPD).', idade);
     }
 
     let responsavel = null;
-    if (idadeNum >= 13 && idadeNum < 18) {
+    if (idadeNum < IDADE_MAIORIDADE) {
       if (responsavelNome.value.trim().length < 3) {
-        return mostrarErro('Informe o nome completo do responsável legal.', responsavelNome);
+        return erro('Informe o nome completo do responsável legal.', responsavelNome);
       }
-      if (!emailPattern.test(responsavelEmail.value.trim())) {
-        return mostrarErro('Informe um e-mail válido do responsável legal.', responsavelEmail);
+      if (!PADRAO_EMAIL.test(responsavelEmail.value.trim())) {
+        return erro('Informe um e-mail válido do responsável legal.', responsavelEmail);
       }
       if (!autorizacaoResponsavel.checked) {
-        return mostrarErro('É necessária a autorização do responsável legal.', autorizacaoResponsavel);
+        return erro('É necessária a autorização do responsável legal.', autorizacaoResponsavel);
       }
-      responsavel = {
-        nome: responsavelNome.value.trim(),
-        email: responsavelEmail.value.trim()
-      };
+      responsavel = { nome: responsavelNome.value.trim(), email: responsavelEmail.value.trim() };
     }
 
     if (senha.value.length < 8) {
-      return mostrarErro('A senha deve ter no mínimo 8 caracteres.', senha);
+      return erro('A senha deve ter no mínimo 8 caracteres.', senha);
+    }
+    if (!aceitePagina.checked) {
+      return erro('Marque a caixa para concordar com as regras da academia e as políticas do ranking.', aceitePagina);
     }
 
-    if (senha.value !== confirmaSenha.value) {
-      return mostrarErro('As senhas não coincidem.', confirmaSenha);
-    }
-
-    dadosCadastroPendente = {
-      nome: usuario.value.trim(),
+    dadosPendentes = {
+      nome: nome.value.trim(),
       email: email.value.trim(),
       idade: idadeNum,
       senha: senha.value,
       responsavel: responsavel
     };
-
-    abrirModalConsentimento();
+    abrirConsentimento();
   });
 
-  btnConfirmarCadastro.addEventListener('click', async function () {
-    if (!dadosCadastroPendente) return;
+  btnConfirmar.addEventListener('click', async function () {
+    if (!dadosPendentes) return;
 
     if (!aceiteTermos.checked) {
-      erroModalTermo.textContent = 'Você precisa ler e aceitar o Termo de Uso e o Termo de Consentimento.';
+      erroModal.textContent = 'Você precisa ler e aceitar o Termo de Uso e o Termo de Consentimento.';
       return;
     }
 
     const consentimentos = {};
-    document.querySelectorAll('input[name="consent"]').forEach(function (cb) {
-      consentimentos[cb.value] = cb.checked;
+    document.querySelectorAll('input[name="consent"]').forEach(function (caixa) {
+      consentimentos[caixa.value] = caixa.checked;
     });
 
-    btnConfirmarCadastro.disabled = true;
-    btnConfirmarCadastro.textContent = 'ENVIANDO...';
-    erroModalTermo.textContent = '';
+    btnConfirmar.disabled = true;
+    btnConfirmar.textContent = 'Enviando...';
+    erroModal.textContent = '';
 
     try {
-      const resposta = await fetch(`${API_URL}/usuarios`, {
+      const resposta = await fetch(API_URL + '/usuarios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          nome: dadosCadastroPendente.nome,
-          email: dadosCadastroPendente.email,
-          idade: dadosCadastroPendente.idade,
-          senha: dadosCadastroPendente.senha,
+          nome: dadosPendentes.nome,
+          email: dadosPendentes.email,
+          idade: dadosPendentes.idade,
+          senha: dadosPendentes.senha,
           aceite_termos: true,
           consentimentos: consentimentos,
-          responsavel: dadosCadastroPendente.responsavel,
-          autorizacao_responsavel: dadosCadastroPendente.responsavel !== null
+          responsavel: dadosPendentes.responsavel,
+          autorizacao_responsavel: dadosPendentes.responsavel !== null
         })
       });
-
-      const dados = await resposta.json();
+      const dados = await resposta.json().catch(function () { return {}; });
 
       if (!resposta.ok) {
-        erroModalTermo.textContent = dados.erro || 'Não foi possível concluir o cadastro.';
+        erroModal.textContent = dados.erro || 'Não foi possível concluir o cadastro.';
         return;
       }
 
-      fecharModalTermo();
-      mostrarSucesso((dados.mensagem || 'Cadastro realizado com sucesso!') + ' Redirecionando para o login...');
+      fecharModal();
+      mostrarMensagemForm(mensagem, (dados.mensagem || 'Cadastro realizado com sucesso!') + ' Redirecionando para o login...', true);
       form.reset();
       atualizarResponsavel();
-      setTimeout(function () { window.location.href = 'login.html'; }, 1500);
-    } catch (erro) {
-      erroModalTermo.textContent = 'Não foi possível conectar à API. Verifique se o backend está rodando (python app.py).';
+      botaoCadastrar.disabled = true;
+      setTimeout(function () { window.location.href = PAGINA_LOGIN; }, ATRASO_REDIRECIONAR_MS);
+    } catch (e) {
+      erroModal.textContent = 'Não foi possível conectar à API. Verifique se o backend está rodando (python app.py).';
     } finally {
-      btnConfirmarCadastro.disabled = false;
-      btnConfirmarCadastro.textContent = 'Confirmar cadastro';
+      btnConfirmar.disabled = false;
+      btnConfirmar.textContent = 'Confirmar cadastro';
     }
   });
-
-  function limparMensagem() {
-    errorMessage.textContent = '';
-    errorMessage.style.color = '';
-  }
-
-  function mostrarErro(mensagem, campo) {
-    errorMessage.style.color = '';
-    errorMessage.textContent = mensagem;
-    if (campo) campo.focus();
-  }
-
-  function mostrarSucesso(mensagem) {
-    errorMessage.style.color = '#2ecc71';
-    errorMessage.textContent = mensagem;
-  }
 });

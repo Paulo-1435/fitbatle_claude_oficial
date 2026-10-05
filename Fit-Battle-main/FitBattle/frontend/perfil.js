@@ -1,5 +1,3 @@
-const API_URL = 'http://localhost:5000/api';
-const ORIGEM_API = API_URL.replace(/\/api\/?$/, '');
 const TAMANHO_MAX_FOTO = 3 * 1024 * 1024;
 
 const FAIXAS_NIVEL = [
@@ -27,11 +25,8 @@ let usuarioLogado = null;
 let fotoSelecionada = null;
 
 document.addEventListener('DOMContentLoaded', function () {
-  usuarioLogado = lerUsuarioLocal();
-  if (!usuarioLogado) {
-    window.location.href = 'login.html';
-    return;
-  }
+  usuarioLogado = exigirLogin();
+  if (!usuarioLogado) return;
 
   configurarMenu();
   configurarModais();
@@ -66,14 +61,14 @@ function configurarAvatar() {
 
 async function carregarPerfil() {
   try {
-    const resposta = await fetch(`${API_URL}/usuarios/${usuarioLogado.id}`);
+    const resposta = await api(`/usuarios/${usuarioLogado.id}`);
     if (!resposta.ok) {
       if (resposta.status === 404) return sair();
       throw new Error('falha');
     }
     const u = await resposta.json();
     usuarioLogado = u;
-    salvarUsuarioLocal(u);
+    atualizarUsuarioDaSessao(u);
     preencherPerfil(u);
   } catch (e) {
     mostrarToast('Não foi possível carregar o perfil. A API está rodando?');
@@ -103,7 +98,7 @@ function preencherPerfil(u) {
 
 async function carregarTreinos() {
   try {
-    const resposta = await fetch(`${API_URL}/usuarios/${usuarioLogado.id}/atividades`);
+    const resposta = await api(`/usuarios/${usuarioLogado.id}/atividades`);
     if (!resposta.ok) throw new Error('falha');
     const treinos = await resposta.json();
     renderizarTreinos(treinos);
@@ -117,7 +112,7 @@ async function carregarTreinos() {
 
 async function carregarRankingLocal() {
   try {
-    const resposta = await fetch(`${API_URL}/usuarios/${usuarioLogado.id}/ranking`);
+    const resposta = await api(`/usuarios/${usuarioLogado.id}/ranking`);
     if (!resposta.ok) return;
     const dados = await resposta.json();
     const pos = dados.regional && dados.regional.posicao;
@@ -206,7 +201,7 @@ function metrica(valor, unidade, rotulo) {
 async function excluirTreino(id) {
   if (!confirm('Excluir este treino? A pontuação dele será descontada.')) return;
   try {
-    const resposta = await fetch(`${API_URL}/atividades/${id}`, { method: 'DELETE' });
+    const resposta = await api(`/atividades/${id}`, { method: 'DELETE' });
     if (!resposta.ok) throw new Error('falha');
     mostrarToast('Treino excluído.');
     carregarPerfil();
@@ -304,7 +299,7 @@ function configurarModais() {
     };
 
     try {
-      const resposta = await fetch(`${API_URL}/usuarios/${usuarioLogado.id}/atividades`, {
+      const resposta = await api(`/usuarios/${usuarioLogado.id}/atividades`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpo)
@@ -339,7 +334,7 @@ function configurarModais() {
     };
 
     try {
-      const resposta = await fetch(`${API_URL}/usuarios/${usuarioLogado.id}`, {
+      const resposta = await api(`/usuarios/${usuarioLogado.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(corpo)
@@ -352,7 +347,7 @@ function configurarModais() {
       if (fotoSelecionada) {
         const fd = new FormData();
         fd.append('foto', fotoSelecionada);
-        const rFoto = await fetch(`${API_URL}/usuarios/${usuarioLogado.id}/foto`, {
+        const rFoto = await api(`/usuarios/${usuarioLogado.id}/foto`, {
           method: 'POST',
           body: fd
         });
@@ -365,7 +360,7 @@ function configurarModais() {
       }
 
       usuarioLogado = usuarioFinal;
-      salvarUsuarioLocal(usuarioFinal);
+      atualizarUsuarioDaSessao(usuarioFinal);
       preencherPerfil(usuarioFinal);
       carregarRankingLocal();
       fotoSelecionada = null;
@@ -432,8 +427,7 @@ function configurarMenu() {
 }
 
 function sair() {
-  try { localStorage.removeItem('fitbattle_usuario'); } catch (e) {}
-  window.location.href = 'login.html';
+  encerrarSessao();
 }
 
 function configurarRanking() {
@@ -467,13 +461,13 @@ async function carregarRanking(escopo) {
       lista.innerHTML = '<p class="rank-vazio">Informe sua cidade em "Editar perfil" para ver o ranking da sua região.</p>';
       return;
     }
-    url = `${API_URL}/ranking/regional?cidade=${encodeURIComponent(usuarioLogado.cidade)}`;
+    url = `/ranking/regional?cidade=${encodeURIComponent(usuarioLogado.cidade)}`;
   } else {
-    url = `${API_URL}/ranking/global`;
+    url = '/ranking/global';
   }
 
   try {
-    const resposta = await fetch(url);
+    const resposta = await api(url);
     const dados = await resposta.json();
     if (!resposta.ok) {
       lista.innerHTML = '<p class="rank-vazio">' + esc(dados.erro || 'Não foi possível carregar o ranking.') + '</p>';
@@ -538,19 +532,6 @@ function calcularSequencia(treinos) {
     cursor.setDate(cursor.getDate() - 1);
   }
   return sequencia;
-}
-
-function lerUsuarioLocal() {
-  try {
-    const bruto = localStorage.getItem('fitbattle_usuario');
-    return bruto ? JSON.parse(bruto) : null;
-  } catch (e) {
-    return null;
-  }
-}
-
-function salvarUsuarioLocal(u) {
-  try { localStorage.setItem('fitbattle_usuario', JSON.stringify(u)); } catch (e) {}
 }
 
 function texto(id, valor) {

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Detalhes da Meta</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="grupo.css">
+  <link rel="stylesheet" href="metas.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="metas-detalhes.js" defer></script>
+</head>
+<body data-pagina="metas">
+<main>
+
+  <div class="meta-detalhe-topo">
+    <a class="link-voltar" href="metas.html">&larr; Voltar para Minhas Metas</a>
+    <span class="rotulo-mini">Meta individual · Privada</span>
+  </div>
+
+  <section class="card card--interno meta-detalhe-cabecalho">
+    <div class="meta-detalhe-cabecalho__texto">
+      <div class="meta-detalhe-tags" id="metaTags"></div>
+      <h1 id="metaTitulo">Carregando...</h1>
+      <span class="rotulo-mini" id="metaInfo"></span>
+    </div>
+    <div class="meta-detalhe-cabecalho__acoes">
+      <button type="button" class="btn btn--secundario btn--pequeno" id="btnEditarMeta">✎ Editar Meta</button>
+      <button type="button" class="btn btn--secundario btn--pequeno" id="btnExcluirMeta">🗑 Excluir Meta</button>
+    </div>
+  </section>
+
+  <div class="meta-stats">
+    <div class="card card--interno meta-stats__item">
+      <span class="rotulo-mini">Ponto de Partida</span>
+      <div class="meta-stats__valor" id="statPartida">—</div>
+      <span class="rotulo-mini" id="statPartidaLegenda"></span>
+    </div>
+    <div class="card card--interno meta-stats__item">
+      <span class="rotulo-mini" id="statAtualRotulo">Valor Atual</span>
+      <div class="meta-stats__valor" id="statAtual">—</div>
+      <span class="rotulo-mini" id="statAtualLegenda"></span>
+    </div>
+    <div class="card card--interno meta-stats__item">
+      <span class="rotulo-mini">Objetivo Final</span>
+      <div class="meta-stats__valor" id="statObjetivo">—</div>
+      <span class="rotulo-mini" id="statObjetivoLegenda"></span>
+    </div>
+    <div class="card card--interno meta-stats__item">
+      <span class="rotulo-mini">Faltam</span>
+      <div class="meta-stats__valor" id="statFaltam">—</div>
+      <span class="rotulo-mini" id="statPercentual"></span>
+    </div>
+  </div>
+
+  <section class="card card--interno meta-progresso">
+    <h2 id="tituloProgresso">Progresso Geral</h2>
+    <div class="meta-progresso__topo">
+      <span id="progressoPercentualTexto"></span>
+    </div>
+    <div class="barra meta-progresso__barra">
+      <div class="barra__preenchimento" id="barraProgresso"></div>
+    </div>
+    <div class="meta-progresso__legenda">
+      <span id="legendaInicio"></span>
+      <span id="legendaAtual"></span>
+      <span id="legendaMeta"></span>
+    </div>
+    <p class="meta-progresso__callout" id="calloutProgresso"></p>
+  </section>
+
+  <div class="grupos-grade">
+    <section class="card card--interno" id="blocoHistorico">
+      <h2>Histórico de Registros Vinculados</h2>
+      <p class="grupo-ranking-legenda" id="historicoLegenda"></p>
+      <ul class="meta-historico-lista" id="listaHistorico"></ul>
+    </section>
+
+    <aside class="grupos-lateral">
+      <div class="card card--interno">
+        <h3>Informações da Meta</h3>
+        <dl class="meta-info-lista" id="infoMeta"></dl>
+      </div>
+
+      <div class="card card--interno meta-cta">
+        <strong>Registrou um treino novo?</strong>
+        <p>Mantenha suas cargas atualizadas e veja o avanço rumo ao seu objetivo.</p>
+        <a class="btn btn--primario btn--bloco" href="registrar-treino.html">+ Ir para Registrar Treino</a>
+      </div>
+    </aside>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Detalhes do Grupo</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="ranking.css">
+  <link rel="stylesheet" href="grupo.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="grupo-detalhes.js" defer></script>
+</head>
+<body data-pagina="grupo">
+<main>
+
+  <a class="link-voltar" href="grupo.html">&larr; Voltar para Meus Grupos</a>
+
+  <section class="card grupo-cabecalho-detalhe">
+    <div class="grupo-cabecalho-detalhe__icone" id="iconeGrupo" aria-hidden="true"></div>
+    <div class="grupo-cabecalho-detalhe__texto">
+      <div class="grupo-cabecalho-detalhe__titulo">
+        <h1 id="nomeGrupo">Carregando...</h1>
+        <span class="badge badge--destaque">Ativo</span>
+      </div>
+      <p id="descricaoGrupo"></p>
+      <span class="rotulo-mini" id="infoGrupo"></span>
+    </div>
+    <button type="button" class="btn btn--primario" id="btnConvidarMembro" hidden>+ Convidar Novo Membro</button>
+  </section>
+
+  <div class="grupos-grade">
+    <section class="card card--interno">
+      <h2>Ranking Interno do Grupo</h2>
+      <p class="grupo-ranking-legenda">Pontuação total de XP acumulada exclusivamente entre os membros deste grupo.</p>
+
+      <div class="podio" id="podioGrupo">
+        <p class="estado-vazio">Carregando o pódio...</p>
+      </div>
+
+      <div class="ranking-tabela__scroll">
+        <table class="ranking-tabela" id="tabelaRankingGrupo">
+          <thead>
+            <tr>
+              <th scope="col">Pos.</th>
+              <th scope="col">Membro</th>
+              <th scope="col">Pontuação (XP)</th>
+              <th scope="col">Ação</th>
+            </tr>
+          </thead>
+          <tbody id="tabelaRankingGrupoCorpo">
+            <tr><td colspan="4" class="estado-vazio">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <aside class="grupos-lateral">
+      <div class="card card--interno">
+        <div class="grupo-membros-cabecalho">
+          <h3>Membros do Grupo</h3>
+          <span class="rotulo-mini" id="totalMembros"></span>
+        </div>
+        <ul class="grupo-membros-lista" id="listaMembros">
+          <li class="estado-vazio">Carregando...</li>
+        </ul>
+      </div>
+
+      <div class="card card--interno grupo-aviso-em-breve">
+        <div>
+          <strong>Histórico de Treinos em Grupo</strong>
+          <span class="badge badge--placeholder">Em breve</span>
+        </div>
+        <p>Comparação direta de séries e visualização de logs coletivos serão disponibilizados em próximas atualizações.</p>
+      </div>
+    </aside>
+  </div>
+
+</main>
+</body>
+</html>

@@ -1,13 +1,31 @@
 import os
+import re
 from urllib.parse import quote_plus
 
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
+from werkzeug.exceptions import HTTPException
 
+from auth import carregar_chave_secreta
 from database import db
 from routers.routers import Fitbattle_bp
 
 PASTA_UPLOAD = os.path.join(os.path.dirname(__file__), "uploads")
+
+ORIGENS_PERMITIDAS = [
+    re.compile(r"^https?://localhost(:\d+)?$"),
+    re.compile(r"^https?://127\.0\.0\.1(:\d+)?$"),
+    re.compile(r"^https?://192\.168\.\d{1,3}\.\d{1,3}(:\d+)?$"),
+    re.compile(r"^https?://10\.\d{1,3}\.\d{1,3}\.\d{1,3}(:\d+)?$"),
+    re.compile(r"^https?://172\.(1[6-9]|2\d|3[0-1])\.\d{1,3}\.\d{1,3}(:\d+)?$"),
+]
+
+
+def _origens_cors():
+    origens = list(ORIGENS_PERMITIDAS)
+    extras = os.getenv("CORS_EXTRA_ORIGENS", "")
+    origens.extend(origem.strip() for origem in extras.split(",") if origem.strip())
+    return origens
 
 
 def criar_app():
@@ -19,23 +37,23 @@ def criar_app():
     porta = os.getenv("DB_PORT", "3306")
     banco = os.getenv("DB_NAME", "fitbattle")
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = (
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DB_URI") or (
         f"mysql+pymysql://{quote_plus(usuario)}:{quote_plus(senha)}"
         f"@{host}:{porta}/{banco}"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "dev-fitbattle-trocar-em-producao")
+    app.config["SECRET_KEY"] = carregar_chave_secreta()
     app.config["UPLOAD_FOLDER"] = PASTA_UPLOAD
     app.config["MAX_CONTENT_LENGTH"] = 3 * 1024 * 1024
 
     os.makedirs(PASTA_UPLOAD, exist_ok=True)
 
     db.init_app(app)
-    CORS(app)
+    CORS(app, origins=_origens_cors())
 
     app.register_blueprint(Fitbattle_bp)
 
-    from models.model import Usuario
+    import models.model
 
     with app.app_context():
         db.create_all()
@@ -48,10 +66,19 @@ def criar_app():
     def servir_upload(nome):
         return send_from_directory(app.config["UPLOAD_FOLDER"], nome)
 
+    @app.errorhandler(HTTPException)
+    def erro_http(erro):
+        return jsonify({"erro": erro.description}), erro.code
+
+    @app.errorhandler(Exception)
+    def erro_inesperado(erro):
+        app.logger.exception(erro)
+        return jsonify({"erro": "Erro interno do servidor."}), 500
+
     return app
 
 
 app = criar_app()
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=os.getenv("FLASK_DEBUG") == "1", port=5000)

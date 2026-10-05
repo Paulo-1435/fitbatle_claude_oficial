@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Grupos Privados</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="grupo.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="grupo.js" defer></script>
+</head>
+<body data-pagina="grupo">
+<main>
+
+  <section class="grupos-cabecalho">
+    <div>
+      <span class="rotulo-mini rotulo-mini--destaque">Comunidade &amp; Desempenho</span>
+      <h1>Grupos Privados</h1>
+      <p>Gerencie e participe de grupos de treino com outros usuários para acompanhar o ranking interno.</p>
+    </div>
+    <button type="button" class="btn btn--primario" id="btnCriarGrupo">+ Criar novo grupo</button>
+  </section>
+
+  <div class="abas" role="tablist" aria-label="Grupos">
+    <button type="button" class="aba aba--ativa" id="abaMeusGrupos" role="tab" aria-selected="true">
+      Meus Grupos <span class="contador-aba" id="contadorMeusGrupos"></span>
+    </button>
+    <button type="button" class="aba" id="abaConvites" role="tab" aria-selected="false">
+      Convites Recebidos <span class="contador-aba contador-aba--aviso" id="contadorConvites" hidden></span>
+    </button>
+  </div>
+
+  <section id="painelMeusGrupos">
+    <div class="grupos-grade">
+      <div id="listaGrupos">
+        <p class="estado-vazio">Carregando seus grupos...</p>
+      </div>
+
+      <aside class="grupos-lateral">
+        <div class="card card--interno grupos-convite-destaque" id="destaqueConvite" hidden>
+          <span class="badge badge--destaque">✉ Convite pendente</span>
+          <h3 id="destaqueConviteGrupo">—</h3>
+          <p id="destaqueConviteTexto"></p>
+          <button type="button" class="btn btn--secundario btn--pequeno" id="btnVerConvites">Ver convite</button>
+        </div>
+
+        <div class="card card--interno">
+          <h3>Como funcionam os grupos</h3>
+          <ul class="grupos-info-lista">
+            <li>Apenas integrantes confirmados pontuam na tabela privada.</li>
+            <li>Administradores podem convidar e gerar o link de acesso ao grupo.</li>
+            <li>A pontuação é sincronizada automaticamente após cada treino salvo.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    <div class="estado-vazio-grupo" id="estadoVazioGrupos" hidden>
+      <p class="estado-vazio-grupo__titulo">Você ainda não participa de nenhum grupo privado.</p>
+      <p class="estado-vazio-grupo__texto">Crie seu próprio grupo ou aceite um convite recebido para começar a pontuar em equipe.</p>
+      <button type="button" class="btn btn--secundario" id="btnCriarPrimeiroGrupo">+ Criar meu primeiro grupo</button>
+    </div>
+  </section>
+
+  <section id="painelConvites" hidden>
+    <div class="grupos-grade">
+      <div id="listaConvites">
+        <p class="estado-vazio">Carregando convites...</p>
+      </div>
+
+      <aside class="grupos-lateral">
+        <div class="card card--interno grupos-contadores">
+          <div>
+            <span class="rotulo-mini">Meus Grupos</span>
+            <span class="grupos-contador-valor" id="contadorMeusGruposLateral">0</span>
+          </div>
+          <div>
+            <span class="rotulo-mini">Convites Enviados</span>
+            <span class="grupos-contador-valor" id="contadorEnviados">0</span>
+            <span class="rotulo-mini">Aguardando resposta</span>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+</main>
+</body>
+</html>

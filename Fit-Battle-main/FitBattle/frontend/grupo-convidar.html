@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Convidar para o Grupo</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="grupo.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="grupo-convidar.js" defer></script>
+</head>
+<body data-pagina="grupo">
+<main>
+
+  <a class="link-voltar" id="linkVoltarGrupo" href="grupo.html">&larr; Voltar para o grupo</a>
+
+  <section class="grupos-cabecalho grupos-cabecalho--form">
+    <h1>Convidar Membros para o Grupo</h1>
+    <p>Adicione pessoas ao grupo <strong id="nomeGrupoConvite">—</strong> através de busca direta ou compartilhando o link de convite oficial.</p>
+  </section>
+
+  <div class="card card--interno convite-opcao">
+    <div class="convite-opcao__topo">
+      <div>
+        <strong>Buscar Usuário na Plataforma</strong>
+        <p class="rotulo-mini">Localize atletas já cadastrados no FitBattle para envio imediato</p>
+      </div>
+      <span class="badge">Opção A</span>
+    </div>
+
+    <input class="input" type="search" id="buscaConvidar" placeholder="Buscar pelo nome..." autocomplete="off">
+
+    <p class="rotulo-mini" id="contagemResultados"></p>
+    <ul class="convite-resultados" id="resultadosConvite"></ul>
+  </div>
+
+  <div class="convite-ou"><span>ou</span></div>
+
+  <div class="card card--interno convite-opcao" id="blocoLink" hidden>
+    <div class="convite-opcao__topo">
+      <div>
+        <strong>Link de Convite do Grupo</strong>
+        <p class="rotulo-mini">Compartilhamento direto para entrada instantânea na comunidade</p>
+      </div>
+      <span class="badge">Opção B</span>
+    </div>
+
+    <p>Qualquer usuário com este link poderá entrar diretamente no grupo.</p>
+
+    <div class="convite-link-caixa">
+      <input class="input" type="text" id="linkConvite" readonly>
+      <button type="button" class="btn btn--secundario" id="btnCopiarLink">Copiar Link</button>
+    </div>
+
+    <p class="rotulo-mini">O link é exclusivo para este grupo. <button type="button" class="link-acao" id="btnRegenerarLink">Gerar novo link</button>, o que invalida o anterior.</p>
+  </div>
+
+  <div class="form-grupo__acoes">
+    <a class="btn btn--primario" id="btnConcluirConvite" href="grupo.html">✓ Concluir e Voltar ao Grupo</a>
+  </div>
+
+</main>
+</body>
+</html>

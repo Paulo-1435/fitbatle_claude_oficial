@@ -1,71 +1,60 @@
-const API_URL = 'http://localhost:5000/api';
+const PADRAO_EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const ATRASO_REDIRECIONAR_MS = 700;
 
 document.addEventListener('DOMContentLoaded', function () {
   const form = document.getElementById('loginForm');
-  const email = document.getElementById('email');
+  const identificador = document.getElementById('email');
   const senha = document.getElementById('senha');
-  const errorMessage = document.getElementById('errorMessage');
-  const botao = form.querySelector('.btn-cadastrar');
+  const lembrar = document.getElementById('lembrar');
+  const mensagem = document.getElementById('errorMessage');
+  const botao = document.getElementById('btnEntrar');
+  const rotuloBotao = botao.querySelector('span');
 
-  form.addEventListener('submit', async function (event) {
-    event.preventDefault();
-    limparMensagem();
+  limparErroAoEditar(form, mensagem);
 
-    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailPattern.test(email.value.trim())) {
-      return mostrarErro('Informe um email válido.', email);
-    }
-    if (senha.value === '') {
-      return mostrarErro('Informe sua senha.', senha);
-    }
-
-    botao.disabled = true;
-    botao.textContent = 'ENTRANDO...';
-
-    try {
-      const resposta = await fetch(`${API_URL}/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: email.value.trim(),
-          senha: senha.value
-        })
-      });
-
-      const dados = await resposta.json();
-
-      if (!resposta.ok) {
-        mostrarErro(dados.erro || 'Não foi possível entrar.');
-        return;
-      }
-
-      try {
-        localStorage.setItem('fitbattle_usuario', JSON.stringify(dados.usuario));
-      } catch (e) {}
-
-      mostrarSucesso(`Bem-vindo, ${dados.usuario.nome}! Redirecionando...`);
-      setTimeout(function () { window.location.href = 'perfil.html'; }, 900);
-    } catch (erro) {
-      mostrarErro('Não foi possível conectar à API. Verifique se o backend está rodando (python app.py).');
-    } finally {
-      botao.disabled = false;
-      botao.textContent = 'ENTRAR';
-    }
-  });
-
-  function limparMensagem() {
-    errorMessage.textContent = '';
-    errorMessage.style.color = '';
-  }
-
-  function mostrarErro(mensagem, campo) {
-    errorMessage.style.color = '';
-    errorMessage.textContent = mensagem;
+  function erro(texto, campo) {
+    mostrarMensagemForm(mensagem, texto, false);
     if (campo) campo.focus();
   }
 
-  function mostrarSucesso(mensagem) {
-    errorMessage.style.color = '#2ecc71';
-    errorMessage.textContent = mensagem;
-  }
+  form.addEventListener('submit', async function (evento) {
+    evento.preventDefault();
+    mostrarMensagemForm(mensagem, '', false);
+
+    const valor = identificador.value.trim();
+    if (valor.charAt(0) === '@' || (valor !== '' && valor.indexOf('@') === -1)) {
+      return erro('O login por @usuário ainda não está disponível. Use o seu e-mail.', identificador);
+    }
+    if (!PADRAO_EMAIL.test(valor)) {
+      return erro('Informe um e-mail válido.', identificador);
+    }
+    if (senha.value === '') {
+      return erro('Informe sua senha.', senha);
+    }
+
+    botao.disabled = true;
+    rotuloBotao.textContent = 'Entrando...';
+
+    try {
+      const resposta = await fetch(API_URL + '/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: valor, senha: senha.value })
+      });
+      const dados = await resposta.json().catch(function () { return {}; });
+
+      if (!resposta.ok) {
+        return erro(dados.erro || 'Não foi possível entrar.');
+      }
+
+      salvarSessao(dados.token, dados.usuario, lembrar.checked);
+      mostrarMensagemForm(mensagem, 'Bem-vindo, ' + dados.usuario.nome + '! Redirecionando...', true);
+      setTimeout(function () { window.location.href = PAGINA_INICIAL; }, ATRASO_REDIRECIONAR_MS);
+    } catch (e) {
+      erro('Não foi possível conectar à API. Verifique se o backend está rodando (python app.py).');
+    } finally {
+      botao.disabled = false;
+      rotuloBotao.textContent = 'Entrar no FitBattle';
+    }
+  });
 });

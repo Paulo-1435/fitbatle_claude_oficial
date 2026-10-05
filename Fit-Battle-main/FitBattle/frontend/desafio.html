@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Desafio 1x1</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="desafio.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="desafio.js" defer></script>
+</head>
+<body data-pagina="desafios">
+<main>
+
+  <div class="dsf-aviso">
+    <svg class="icone" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span>Prévia visual do Desafio 1x1. O duelo abaixo usa dados de exemplo fixos do design; o sistema de desafios de verdade ainda está em desenvolvimento.</span>
+  </div>
+
+  <div class="dsf-cabecalho">
+    <span class="badge badge--destaque dsf-cabecalho__chip">⚔ Arena de Duelo FitBattle</span>
+    <h1>Desafio 1x1: Supino Reto</h1>
+    <p>Duelo amigável entre você e Pedro Surfistão valendo posições de honra no ranking da academia!</p>
+  </div>
+
+  <section class="card dsf-arena" aria-label="Comparação do duelo">
+    <div class="dsf-lado dsf-lado--voce">
+      <span class="dsf-lado__etiqueta">Você</span>
+      <span class="avatar" aria-hidden="true">PA</span>
+      <span class="dsf-lado__nome">Paulo Susu</span>
+      <span class="dsf-lado__faixa">Faixa Ouro • Lvl 18</span>
+      <div class="dsf-lado__stats">
+        <div class="dsf-lado__stat">
+          <span class="dsf-lado__stat-valor">140kg</span>
+          <span class="dsf-lado__stat-rotulo">Seu recorde</span>
+        </div>
+        <div class="dsf-lado__stat">
+          <span class="dsf-lado__stat-valor">24 dias</span>
+          <span class="dsf-lado__stat-rotulo">No mês</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dsf-vs">
+      <span class="dsf-vs__badge">VS</span>
+      <span class="badge badge--placeholder">Melhor de 3</span>
+      <span class="dsf-vs__legenda">Tentativas oficiais</span>
+      <span class="dsf-vs__legenda">🛡️ Arbitragem presencial</span>
+    </div>
+
+    <div class="dsf-lado dsf-lado--desafiante">
+      <span class="dsf-lado__etiqueta">Desafiante</span>
+      <span class="avatar" aria-hidden="true">PE</span>
+      <span class="dsf-lado__nome">Pedro Surfistão</span>
+      <span class="dsf-lado__faixa">Faixa Ouro • Lvl 19</span>
+      <div class="dsf-lado__stats">
+        <div class="dsf-lado__stat">
+          <span class="dsf-lado__stat-valor">145kg</span>
+          <span class="dsf-lado__stat-rotulo">Recorde dele</span>
+        </div>
+        <div class="dsf-lado__stat">
+          <span class="dsf-lado__stat-valor">22 dias</span>
+          <span class="dsf-lado__stat-rotulo">No mês</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="dsf-comparativo">
+      <div class="dsf-comparativo__legenda">
+        <span>Você (140kg)</span>
+        <span>Pedro (145kg)</span>
+      </div>
+      <div class="dsf-comparativo__barra" role="img" aria-label="Você 140 quilos contra Pedro 145 quilos">
+        <span class="dsf-comparativo__parte--voce" style="width:49%"></span>
+        <span class="dsf-comparativo__parte--desafiante" style="width:51%"></span>
+      </div>
+      <p class="dsf-comparativo__diferenca">Diferença: <strong>+5kg para Pedro</strong></p>
+    </div>
+  </section>
+
+  <section class="card dsf-confronto">
+    <p>🤝 Confronto direto: <strong>vocês já empataram 2 vezes!</strong></p>
+    <span class="badge badge--placeholder">Histórico equilibrado</span>
+  </section>
+
+  <h2 style="margin-bottom: var(--esp-4)">Como funciona o desafio</h2>
+  <div class="dsf-passos">
+    <div class="dsf-passo">
+      <span class="dsf-passo__num">1</span>
+      <h3>Execução limpa</h3>
+      <p>Faça sua melhor repetição no Supino com a barra tocando no peito e subindo firme.</p>
+    </div>
+    <div class="dsf-passo">
+      <span class="dsf-passo__num">2</span>
+      <h3>Grave o vídeo</h3>
+      <p>Grave o vídeo do levantamento ou chame um amigo para registrar os quilos da barra.</p>
+    </div>
+    <div class="dsf-passo">
+      <span class="dsf-passo__num">3</span>
+      <h3>Avaliação justa</h3>
+      <p>O professor da academia confirma o vencedor e valida os pontos no placar geral!</p>
+    </div>
+  </div>
+
+  <div class="dsf-acoes">
+    <button type="button" class="btn btn--primario btn--grande" data-em-breve="Aceitar o desafio">
+      Aceitar Desafio &amp; Enviar Meu Peso 🥊
+    </button>
+    <button type="button" class="btn btn--secundario btn--grande" data-em-breve="Convidar um colega para o desafio">
+      Convidar Outro Colega de Treino
+    </button>
+  </div>
+
+</main>
+</body>
+</html>

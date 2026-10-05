@@ -7,6 +7,14 @@ def _agora():
     return datetime.now(timezone.utc)
 
 
+def _iso_utc(valor):
+    if valor is None:
+        return None
+    if valor.tzinfo is None:
+        valor = valor.replace(tzinfo=timezone.utc)
+    return valor.isoformat()
+
+
 class Usuario(db.Model):
     __tablename__ = "usuario"
 
@@ -58,18 +66,20 @@ class Usuario(db.Model):
             "nivel": self.nivel,
             "xp": self.xp,
             "perfil_publico": self.perfil_publico,
-            "criado_em": self.criado_em.isoformat() if self.criado_em else None,
-            "responsavel": (
-                {
-                    "nome": self.responsavel_nome,
-                    "email": self.responsavel_email,
-                    "autorizado_em": (
-                        self.responsavel_autorizado_em.isoformat()
-                        if self.responsavel_autorizado_em else None
-                    ),
-                }
-                if self.responsavel_nome else None
-            ),
+            "criado_em": _iso_utc(self.criado_em),
+        }
+
+    def to_publico(self):
+        return {
+            "id": self.id_usuario,
+            "nome": self.nome,
+            "cidade": self.cidade,
+            "estado": self.estado,
+            "foto": self.foto,
+            "descricao": self.descricao,
+            "nivel": self.nivel,
+            "xp": self.xp,
+            "criado_em": _iso_utc(self.criado_em),
         }
 
 
@@ -104,7 +114,7 @@ class Atividade(db.Model):
             "carga_kg": float(self.carga_kg) if self.carga_kg is not None else None,
             "repeticoes": self.repeticoes,
             "pontuacao": self.pontuacao,
-            "data_registro": self.data_registro.isoformat() if self.data_registro else None,
+            "data_registro": _iso_utc(self.data_registro),
         }
 
 
@@ -127,7 +137,7 @@ class Postagem(db.Model):
             "id_usuario": self.id_usuario,
             "texto": self.texto,
             "foto": self.foto,
-            "data_registro": self.data_registro.isoformat() if self.data_registro else None,
+            "data_registro": _iso_utc(self.data_registro),
         }
 
 
@@ -167,8 +177,98 @@ class Comentario(db.Model):
             "id": self.id_comentario,
             "id_usuario": self.id_usuario,
             "texto": self.texto,
-            "data_registro": self.data_registro.isoformat() if self.data_registro else None,
+            "data_registro": _iso_utc(self.data_registro),
         }
+
+
+class Grupo(db.Model):
+    __tablename__ = "grupo"
+
+    id_grupo = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nome = db.Column(db.String(120), nullable=False)
+    descricao = db.Column(db.String(300))
+    privacidade = db.Column(db.String(10), nullable=False, default="privado")
+    codigo_convite = db.Column(db.String(10), unique=True)
+    id_criador = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    data_criacao = db.Column(db.DateTime, nullable=False, default=_agora)
+
+    def to_dict(self):
+        return {
+            "id": self.id_grupo,
+            "nome": self.nome,
+            "descricao": self.descricao,
+            "id_criador": self.id_criador,
+            "data_criacao": _iso_utc(self.data_criacao),
+        }
+
+
+class GrupoMembro(db.Model):
+    __tablename__ = "grupo_membro"
+
+    id_grupo = db.Column(
+        db.Integer,
+        db.ForeignKey("grupo.id_grupo", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        primary_key=True,
+    )
+    papel = db.Column(db.String(10), nullable=False, default="membro")
+    entrou_em = db.Column(db.DateTime, nullable=False, default=_agora)
+
+
+class Convite(db.Model):
+    __tablename__ = "convite"
+    __table_args__ = (
+        db.UniqueConstraint("id_grupo", "id_destinatario", "status", name="uq_convite"),
+    )
+
+    id_convite = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_grupo = db.Column(
+        db.Integer,
+        db.ForeignKey("grupo.id_grupo", ondelete="CASCADE"),
+        nullable=False,
+    )
+    id_remetente = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    id_destinatario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    status = db.Column(db.String(10), nullable=False, default="pendente")
+    data_envio = db.Column(db.DateTime, nullable=False, default=_agora)
+    data_resposta = db.Column(db.DateTime)
+
+
+class Meta(db.Model):
+    __tablename__ = "meta"
+
+    id_meta = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_usuario = db.Column(
+        db.Integer,
+        db.ForeignKey("usuario.id_usuario", ondelete="CASCADE"),
+        nullable=False,
+    )
+    descricao = db.Column(db.String(300), nullable=False)
+    tipo = db.Column(db.String(12), nullable=False, default="curto_prazo")
+    tipo_metrica = db.Column(db.String(12), nullable=False)
+    exercicio = db.Column(db.String(120))
+    valor_objetivo = db.Column(db.Numeric(8, 2), nullable=False)
+    valor_partida = db.Column(db.Numeric(8, 2))
+    data_inicio = db.Column(db.Date, nullable=False)
+    data_final = db.Column(db.Date)
+    status = db.Column(db.String(12), nullable=False, default="em_andamento")
+    concluida_em = db.Column(db.DateTime)
 
 
 class Consentimento(db.Model):
@@ -196,8 +296,6 @@ class Consentimento(db.Model):
             "descricao": self.descricao,
             "obrigatorio": self.obrigatorio,
             "aceito": self.aceito,
-            "data_registro": self.data_registro.isoformat() if self.data_registro else None,
-            "data_atualizacao": (
-                self.data_atualizacao.isoformat() if self.data_atualizacao else None
-            ),
+            "data_registro": _iso_utc(self.data_registro),
+            "data_atualizacao": _iso_utc(self.data_atualizacao),
         }

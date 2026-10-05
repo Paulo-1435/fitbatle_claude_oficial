@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FitBattle - Criar Meta</title>
+  <link rel="stylesheet" href="tokens.css">
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="app-shell.css">
+  <link rel="stylesheet" href="grupo.css">
+  <link rel="stylesheet" href="metas.css">
+  <script src="api.js" defer></script>
+  <script src="shell.js" defer></script>
+  <script src="metas-criar.js" defer></script>
+</head>
+<body data-pagina="metas">
+<main>
+
+  <a class="link-voltar" href="metas.html">&larr; Voltar para Minhas Metas</a>
+
+  <section class="grupos-cabecalho--form">
+    <span class="rotulo-mini rotulo-mini--destaque">Objetivo Pessoal</span>
+    <h1>Criar Nova Meta</h1>
+    <p>Defina um objetivo individual com base nos seus treinos e acompanhe seu progresso.</p>
+  </section>
+
+  <form class="card card--interno form-grupo" id="formCriarMeta" novalidate>
+    <div class="campo">
+      <label class="campo__rotulo" for="tituloMeta">Título da meta *</label>
+      <input class="input" type="text" id="tituloMeta" name="titulo" maxlength="300" placeholder="Ex: Bater 150kg no supino reto, Treinar 20 dias no mês..." required>
+      <span class="rotulo-mini">Um nome direto para identificar facilmente seu objetivo.</span>
+    </div>
+
+    <div class="campo-linha">
+      <div class="campo">
+        <label class="campo__rotulo" for="tipoMetrica">Tipo de meta *</label>
+        <select class="input select" id="tipoMetrica" name="tipo_metrica" required>
+          <option value="carga_maxima">Carga máxima (kg)</option>
+          <option value="frequencia">Frequência (treinos)</option>
+        </select>
+      </div>
+      <div class="campo" id="campoExercicio">
+        <label class="campo__rotulo" for="exercicioMeta">Exercício vinculado</label>
+        <input class="input" type="text" id="exercicioMeta" name="exercicio" list="listaExercicios" placeholder="Ex: Supino Reto">
+        <datalist id="listaExercicios">
+          <option value="Supino Reto">
+          <option value="Agachamento Livre">
+          <option value="Levantamento Terra">
+          <option value="Leg Press">
+        </datalist>
+      </div>
+    </div>
+
+    <div class="campo-linha">
+      <div class="campo">
+        <label class="campo__rotulo" for="valorObjetivo">Valor objetivo *</label>
+        <div class="campo-duplo">
+          <input class="input" type="number" id="valorObjetivo" name="valor_objetivo" min="0.01" step="0.01" placeholder="Ex: 150" required>
+          <span id="unidadeObjetivo">kg</span>
+        </div>
+      </div>
+      <div class="campo">
+        <label class="campo__rotulo" for="valorPartida">Valor de partida (opcional)</label>
+        <div class="campo-duplo">
+          <input class="input" type="number" id="valorPartida" name="valor_partida" min="0" step="0.01" placeholder="Ex: 140">
+          <span id="unidadePartida">kg</span>
+        </div>
+        <span class="rotulo-mini">Se não informado, usamos seu maior registro real até agora.</span>
+      </div>
+    </div>
+
+    <div class="campo">
+      <label class="campo__rotulo">Prazo de realização *</label>
+      <div class="abas" id="abasPrazo">
+        <button type="button" class="aba aba--ativa" data-prazo="curto_prazo">Curto Prazo</button>
+        <button type="button" class="aba" data-prazo="longo_prazo">Longo Prazo</button>
+      </div>
+      <span class="rotulo-mini">Curto (até 3 meses) ou longo (+ de 3 meses).</span>
+    </div>
+
+    <div class="campo">
+      <label class="campo__rotulo" for="dataFinal">Data limite (opcional)</label>
+      <input class="input" type="date" id="dataFinal" name="data_final">
+      <span class="rotulo-mini">Estimativa para conclusão da meta.</span>
+    </div>
+
+    <p class="mensagem-form" id="erroCriarMeta" role="alert" aria-live="polite"></p>
+
+    <div class="form-grupo__acoes">
+      <a class="btn btn--secundario" href="metas.html">Cancelar</a>
+      <button type="submit" class="btn btn--primario" id="btnSalvarMeta">✓ Salvar Meta</button>
+    </div>
+  </form>
+
+</main>
+</body>
+</html>
